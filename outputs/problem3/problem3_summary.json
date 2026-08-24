@@ -1,0 +1,17 @@
+{
+  "problem": 3,
+  "visibility_mode": "cylinder",
+  "time_step_seconds": 0.05,
+  "total_union_seconds": 6.45,
+  "missile_union_seconds": {
+    "M1": 6.45
+  },
+  "missile_union_intervals": {
+    "M1": [
+      [
+        0.975,
+        7.425000000000001
+      ]
+    ]
+  }
+}
