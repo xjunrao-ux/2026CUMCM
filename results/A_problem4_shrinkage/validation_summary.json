@@ -1,0 +1,95 @@
+{
+  "model_scope": {
+    "geometry": "one-dimensional axisymmetric cylinder with moving radius",
+    "coordinate": "uniform material coordinate xi=r/R(t)",
+    "radius_interpolation": "piecewise linear Attachment 2 data; last value held only if needed",
+    "constitutive_laws": "Appendix 4 used over the full process",
+    "temperature_state_unit": "K",
+    "latent_heat": "excluded consistently with the simpler questions 1-3 model",
+    "drying_threshold_kg_kg": 0.15,
+    "environment_after_4h": "time-weighted mean over Attachment 1 final hour",
+    "result4_distance_rule": "common fixed physical radii 0.0-1.2 cm every 0.1 cm plus moving surface; no outside-domain blanks",
+    "production_initial_nominal_step_cm": 0.00625,
+    "production_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "coarse_initial_nominal_step_cm": 0.0125,
+    "coarse_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "saved_interval_s": 60.0
+  },
+  "constant_boundary": {
+    "temperature_K": 323.1459166666666,
+    "temperature_C_for_reference": 49.99591666666663,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "radius": {
+    "attachment_interval_s": [
+      0.0,
+      259200.0
+    ],
+    "initial_cm": 2.0,
+    "drying_time_cm": 1.2,
+    "source_node_reconstruction_max_error_cm": 0.0,
+    "recorded_nonincreasing": true
+  },
+  "drying_time": {
+    "production_s": 184022.0,
+    "production_h": 51.117222222222225,
+    "coarse_s": 184026.0,
+    "coarse_h": 51.11833333333333,
+    "coarse_production_difference_s": 4.0,
+    "previous_time_s": 184021.0,
+    "previous_maximum_moisture": 0.1500003574129201,
+    "final_maximum_moisture": 0.14999984398830327,
+    "controlling_radius_cm": 0.0
+  },
+  "grid_refinement": {
+    "common_record_count": 3067,
+    "maximum_moisture_change_kg_kg": 0.0001856785735050437,
+    "mean_moisture_change_kg_kg": 5.287635537677095e-06
+  },
+  "discrete_moisture_balance": {
+    "summed_storage_change": -0.0017477127232918281,
+    "integrated_boundary_outflow": 0.0017477127232914432,
+    "residual": -3.8489177123235407e-16,
+    "relative_residual": 2.202259937247627e-13
+  },
+  "physical_ranges": {
+    "temperature_min_K": 301.150000000028,
+    "temperature_max_K": 323.18923976233043,
+    "moisture_min_kg_kg": 0.05261003249162775,
+    "moisture_max_kg_kg": 2.5500000000000034,
+    "surface_moisture_min_kg_kg": 0.05261003249162775,
+    "diffusivity_min_m2_s": 9.400134353780553e-12,
+    "diffusivity_max_m2_s": 2.4770989237451853e-09
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "invalid_values_outside_current_radius": 0,
+    "missing_values_inside_current_radius": 0,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "maximum_picard_iterations": 8,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "constant_environment": 5528,
+      "threshold_refinement": 3782,
+      "crossing_recomputed": 0
+    }
+  },
+  "result4_submission": {
+    "fixed_radius_min_cm": 0.0,
+    "fixed_radius_max_cm": 1.2,
+    "fixed_radius_step_cm": 0.1,
+    "fixed_radius_column_count": 13,
+    "surface_column": true,
+    "blank_data_cell_count": 0
+  }
+}
