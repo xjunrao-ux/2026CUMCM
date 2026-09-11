@@ -19,6 +19,8 @@ import numpy as np
 
 TABLE_TIMES_S = np.array([1800, 3600, 5400, 7200, 9000, 10800], dtype=int)
 RADIUS_CM = np.round(np.arange(0.0, 2.0 + 0.05, 0.1), 1)
+HEAT_TRANSFER_COEFFICIENT_W_M2_K = 25.0
+MASS_TRANSFER_COEFFICIENT_M_S = 8.0e-7
 PALETTE = {
     "air": "#606060",
     "center": "#0F4D92",
@@ -396,6 +398,137 @@ def render_phase_trajectory(
     save_png(figure, path)
 
 
+def centered_moving_average(values: np.ndarray, window: int = 60) -> np.ndarray:
+    """Edge-preserving moving average used only to clarify the plotted trend."""
+    left = window // 2
+    right = window - 1 - left
+    padded = np.pad(values, (left, right), mode="edge")
+    return np.convolve(padded, np.ones(window) / window, mode="valid")
+
+
+def render_surface_flux(
+    path: Path,
+    times_s: np.ndarray,
+    temperature: np.ndarray,
+    moisture: np.ndarray,
+    oven_temperature: np.ndarray,
+    oven_moisture: np.ndarray,
+) -> dict[str, float]:
+    """Plot convective heat and moisture-potential fluxes at the surface."""
+    hours = times_s / 3600.0
+    heat_flux = HEAT_TRANSFER_COEFFICIENT_W_M2_K * (
+        oven_temperature - temperature[:, -1]
+    )
+    moisture_flux = MASS_TRANSFER_COEFFICIENT_M_S * (
+        moisture[:, -1] - oven_moisture
+    )
+    moisture_flux_scaled = moisture_flux * 1.0e6
+    heat_trend = centered_moving_average(heat_flux)
+    moisture_trend = centered_moving_average(moisture_flux_scaled)
+    duration = times_s[-1] - times_s[0]
+    heat_peak_index = int(np.argmax(np.abs(heat_flux)))
+    moisture_peak_index = int(np.argmax(np.abs(moisture_flux)))
+    summary = {
+        "heat_peak_w_m2": float(heat_flux[heat_peak_index]),
+        "heat_peak_time_h": float(hours[heat_peak_index]),
+        "heat_mean_abs_w_m2": float(
+            np.trapezoid(np.abs(heat_flux), times_s) / duration
+        ),
+        "heat_3h_w_m2": float(heat_flux[-1]),
+        "moisture_peak_1e6": float(moisture_flux_scaled[moisture_peak_index]),
+        "moisture_peak_time_h": float(hours[moisture_peak_index]),
+        "moisture_mean_abs_1e6": float(
+            np.trapezoid(np.abs(moisture_flux_scaled), times_s) / duration
+        ),
+        "moisture_3h_1e6": float(moisture_flux_scaled[-1]),
+    }
+
+    figure, axes = plt.subplots(
+        2, 1, figsize=(7.09, 4.65), sharex=True, constrained_layout=True
+    )
+    axes[0].plot(
+        hours,
+        heat_flux,
+        color="#E7A06A",
+        linewidth=0.55,
+        alpha=0.55,
+        label="Raw（逐秒通量）",
+    )
+    axes[0].plot(
+        hours,
+        heat_trend,
+        color=PALETTE["surface_temperature"],
+        linewidth=1.45,
+        label="Mean（60 s 移动平均）",
+    )
+    axes[0].axhline(0.0, color="#707070", linewidth=0.65)
+    axes[0].set(
+        title="(a) 表面对流热通量（正值：空气 → 药材）",
+        ylabel="热通量 / (W/m²)",
+        xlim=(0.0, 3.0),
+    )
+    axes[0].text(
+        0.985,
+        0.72,
+        "峰值：{:.2f}（{:.2f} h）\n平均绝对值：{:.2f}\n3 h：{:.2f}".format(
+            summary["heat_peak_w_m2"],
+            summary["heat_peak_time_h"],
+            summary["heat_mean_abs_w_m2"],
+            summary["heat_3h_w_m2"],
+        ),
+        transform=axes[0].transAxes,
+        ha="right",
+        va="top",
+        fontsize=7.0,
+        color="#4A4A4A",
+    )
+
+    axes[1].plot(
+        hours,
+        moisture_flux_scaled,
+        color="#75C8B5",
+        linewidth=0.55,
+        alpha=0.58,
+        label="Raw（逐秒通量）",
+    )
+    axes[1].plot(
+        hours,
+        moisture_trend,
+        color=PALETTE["surface_moisture"],
+        linewidth=1.45,
+        label="Mean（60 s 移动平均）",
+    )
+    axes[1].axhline(0.0, color="#707070", linewidth=0.65)
+    axes[1].set(
+        title="(b) 表面水分通量（正值：药材 → 空气）",
+        xlabel="时间 / h",
+        ylabel="水分通量 / [10^-6 (kg/kg)·m/s]",
+        xlim=(0.0, 3.0),
+    )
+    axes[1].text(
+        0.985,
+        0.72,
+        "峰值：{:.3f}（{:.2f} h）\n平均绝对值：{:.3f}\n3 h：{:.3f}".format(
+            summary["moisture_peak_1e6"],
+            summary["moisture_peak_time_h"],
+            summary["moisture_mean_abs_1e6"],
+            summary["moisture_3h_1e6"],
+        ),
+        transform=axes[1].transAxes,
+        ha="right",
+        va="top",
+        fontsize=7.0,
+        color="#4A4A4A",
+    )
+
+    for axis in axes:
+        style_axis(axis)
+        axis.legend(loc="upper right")
+    axes[1].set_xticks(np.arange(0.0, 3.01, 0.5))
+    save_png(figure, path)
+    return summary
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, required=True)
@@ -464,13 +597,24 @@ def main() -> None:
         average_temperature,
         average_moisture,
     )
+    flux_summary = render_surface_flux(
+        output_dir / "surface_heat_moisture_flux.png",
+        temperature_times,
+        temperature,
+        moisture,
+        oven_temperature,
+        oven_moisture,
+    )
 
-    print(f"Generated 6 PNG figures in: {output_dir}")
+    print(f"Generated 7 PNG figures in: {output_dir}")
     print(
         "3 h volume averages: "
         f"T={average_temperature[-1]:.4f} C, "
         f"C={average_moisture[-1]:.4f} kg/kg"
     )
+    print("Surface flux summary:")
+    for name, value in flux_summary.items():
+        print(f"  {name}={value:.6g}")
 
 
 if __name__ == "__main__":
