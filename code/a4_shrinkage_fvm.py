@@ -722,18 +722,14 @@ def write_table_csv(
     table_times_s: np.ndarray,
 ) -> None:
     indices = record_indices_at_times(result, table_times_s)
-    common_radius_cm = math.floor((float(np.min(result.radii_cm)) + 1.0e-9) * 10.0) / 10.0
-    table_radii_cm = TABLE_RADII_CM[
-        TABLE_RADII_CM <= common_radius_cm + 1.0e-12
-    ]
     output_columns = [
         int(np.where(np.isclose(OUTPUT_RADII_CM, radius))[0][0])
-        for radius in table_radii_cm
+        for radius in TABLE_RADII_CM
     ]
     with path.open("w", newline="", encoding="utf-8-sig") as stream:
         writer = csv.writer(stream)
         writer.writerow(
-            ["时间/h", *[f"{radius:g} cm" for radius in table_radii_cm], "药材表面"]
+            ["时间/h", *[f"{radius:g} cm" for radius in TABLE_RADII_CM], "药材表面"]
         )
         for time_s, index in zip(table_times_s, indices):
             label = (
@@ -752,9 +748,6 @@ def write_table_csv(
 
 
 def write_workbook_payload(path: Path, result: ShrinkageResult) -> None:
-    common_radius_cm = math.floor((float(np.min(result.radii_cm)) + 1.0e-9) * 10.0) / 10.0
-    common_mask = OUTPUT_RADII_CM <= common_radius_cm + 1.0e-12
-    common_radii_cm = OUTPUT_RADII_CM[common_mask]
     rows: list[list[float | None]] = []
     for time_s, values, surface in zip(
         result.times_s, result.moisture_kg_kg, result.surface_moisture_kg_kg
@@ -762,17 +755,14 @@ def write_workbook_payload(path: Path, result: ShrinkageResult) -> None:
         rows.append(
             [
                 int(round(float(time_s))),
-                *[
-                    None if np.isnan(value) else round(float(value), 4)
-                    for value in values[common_mask]
-                ],
+                *[None if np.isnan(value) else round(float(value), 4) for value in values],
                 round(float(surface), 4),
             ]
         )
     payload = {
         "headers": [
             "时间\\到药材中心的距离",
-            *[round(float(radius), 1) for radius in common_radii_cm],
+            *[round(float(radius), 1) for radius in OUTPUT_RADII_CM],
             "药材表面",
         ],
         "rows": rows,
@@ -887,9 +877,8 @@ def build_validation(
             "drying_threshold_kg_kg": DRYING_THRESHOLD_KG_KG,
             "environment_after_4h": "time-weighted mean over Attachment 1 final hour",
             "result4_distance_rule": (
-                "common fixed physical radii from 0.0 cm to floor(min R(t), 0.1 cm) "
-                "every 0.1 cm, plus the moving surface; submission cells contain no "
-                "positions outside the herb"
+                "fixed physical radii 0.0-2.0 cm every 0.1 cm plus the moving "
+                "surface; a fixed-radius cell is blank when its radius exceeds R(t)"
             ),
             "production_initial_nominal_step_cm": 0.00625,
             "production_time_steps_s": [1.0, 30.0, 1.0],
