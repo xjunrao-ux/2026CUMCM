@@ -79,6 +79,7 @@ def load_clean_data(project_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
         raise ValueError(f"记录数异常：附件1={len(env)}，附件2={len(radius)}。")
 
     env["time_h"] = env["time_s"] / 3600.0
+    env["temperature_k"] = env["temperature_c"] + 273.15
     radius["time_h"] = radius["time_s"] / 3600.0
     return env, radius
 
@@ -102,53 +103,44 @@ def export_figure(fig: plt.Figure, output_dir: Path, stem: str) -> None:
 
 
 def make_environment_figure(env: pd.DataFrame, output_dir: Path) -> None:
-    temp_tail = float(env.loc[env["time_s"] >= 12600, "temperature_c"].mean())
-    moisture_tail = float(env.loc[env["time_s"] >= 12600, "moisture_kgkg"].mean())
-    temp_95_h = 4740 / 3600
-    moisture_95_h = 6180 / 3600
+    tail_start_s = float(env["time_s"].max() - 3600)
+    temp_tail = float(env.loc[env["time_s"] >= tail_start_s, "temperature_k"].mean())
+    moisture_tail = float(env.loc[env["time_s"] >= tail_start_s, "moisture_kgkg"].mean())
+    preheat_end_h = 1800 / 3600
 
     env_time_h = env["time_h"].to_numpy()
     assert np.all(np.diff(env_time_h) > 0), "插值时间轴必须严格递增。"
-    fig, axes = plt.subplots(1, 2, figsize=(7.0079, 3.0709), constrained_layout=False)
-    fig.subplots_adjust(left=0.09, right=0.985, bottom=0.22, top=0.84, wspace=0.30)
+    fig, axes = plt.subplots(2, 1, figsize=(7.0079, 4.7244), sharex=True, constrained_layout=False)
+    fig.subplots_adjust(left=0.09, right=0.985, bottom=0.12, top=0.88, hspace=0.34)
 
     ax = axes[0]
-    ax.axvspan(0, 0.5, color=COLORS["preheat"], zorder=0)
-    ax.axhspan(temp_tail - 1.0, temp_tail + 1.0, color=COLORS["temperature"], alpha=0.08, zorder=0)
-    ax.plot(env["time_h"], env["temperature_c"], color=COLORS["temperature"], lw=1.55, zorder=3)
-    ax.scatter(env["time_h"], env["temperature_c"], color=COLORS["temperature"], s=4.2, alpha=0.45, linewidths=0, zorder=2)
-    ax.axhline(temp_tail, color=COLORS["neutral"], lw=0.9, ls=(0, (4, 3)), zorder=1)
-    ax.axvline(temp_95_h, color=COLORS["accent"], lw=0.9, ls=(0, (2, 2)), zorder=1)
-    ax.text(0.08, 0.95, "预热区间", transform=ax.transAxes, fontsize=6.5, color="#7A5D2B", va="top")
-    temp_at_95 = float(np.interp(temp_95_h, env_time_h, env["temperature_c"]))
-    ax.annotate("达到最终升温幅度95%\n1.32 h", xy=(temp_95_h, temp_at_95), xytext=(1.70, 39.0), fontsize=6.5, color="#7A4E0D", arrowprops={"arrowstyle": "-", "lw": 0.7, "color": COLORS["accent"]})
-    ax.text(3.95, temp_tail + 0.25, f"末30 min均值 {temp_tail:.2f} °C", ha="right", va="bottom", fontsize=6.5, color=COLORS["neutral"])
-    ax.set(xlim=(0, 4), ylim=(26, 52), xlabel="时间 (h)", ylabel="烘房温度 (°C)", title="温度响应")
+    ax.axvspan(0, preheat_end_h, color=COLORS["preheat"], zorder=0)
+    ax.plot(env["time_h"], env["temperature_k"], color=COLORS["temperature"], lw=1.55, zorder=3)
+    ax.scatter(env["time_h"], env["temperature_k"], color=COLORS["temperature"], s=4.2, alpha=0.45, linewidths=0, zorder=2)
+    ax.axhline(temp_tail, color=COLORS["neutral"], lw=0.7, ls=(0, (3, 3)), alpha=0.65, zorder=1)
+    ax.text(0.25, 0.96, "预热平衡阶段", transform=ax.get_xaxis_transform(), fontsize=6.5, color="#7A5D2B", ha="center", va="top")
+    ax.text(2.25, 0.96, "恒温干燥阶段", transform=ax.get_xaxis_transform(), fontsize=6.5, color=COLORS["neutral"], ha="center", va="top")
+    ax.text(3.95, temp_tail + 0.25, f"末1 h均值 {temp_tail:.2f} K", ha="right", va="bottom", fontsize=6.5, color=COLORS["neutral"])
+    ax.set(xlim=(0, 4), ylim=(299, 326), ylabel="烘房温度 (K)", title="温度响应")
     ax.xaxis.set_major_locator(MultipleLocator(1))
     ax.yaxis.set_major_locator(MultipleLocator(5))
     finish_axis(ax)
     panel_label(ax, "a")
 
     ax = axes[1]
-    ax.axvspan(0, 0.5, color=COLORS["preheat"], zorder=0)
-    ax.axhspan(moisture_tail - 0.002, moisture_tail + 0.002, color=COLORS["moisture"], alpha=0.08, zorder=0)
+    ax.axvspan(0, preheat_end_h, color=COLORS["preheat"], zorder=0)
     ax.plot(env["time_h"], env["moisture_kgkg"], color=COLORS["moisture"], lw=1.55, zorder=3)
     ax.scatter(env["time_h"], env["moisture_kgkg"], color=COLORS["moisture"], s=4.2, alpha=0.45, linewidths=0, zorder=2)
-    ax.axhline(moisture_tail, color=COLORS["neutral"], lw=0.9, ls=(0, (4, 3)), zorder=1)
-    ax.axvline(moisture_95_h, color=COLORS["accent"], lw=0.9, ls=(0, (2, 2)), zorder=1)
-    ax.text(0.08, 0.95, "预热区间", transform=ax.transAxes, fontsize=6.5, color="#7A5D2B", va="top")
-    moisture_at_95 = float(np.interp(moisture_95_h, env_time_h, env["moisture_kgkg"]))
-    ax.annotate("达到最终增幅95%\n1.72 h", xy=(moisture_95_h, moisture_at_95), xytext=(2.00, 0.036), fontsize=6.5, color="#7A4E0D", arrowprops={"arrowstyle": "-", "lw": 0.7, "color": COLORS["accent"]})
-    ax.text(3.95, moisture_tail + 0.0007, f"末30 min均值 {moisture_tail:.5f}", ha="right", va="bottom", fontsize=6.5, color=COLORS["neutral"])
+    ax.axhline(moisture_tail, color=COLORS["neutral"], lw=0.7, ls=(0, (3, 3)), alpha=0.65, zorder=1)
+    ax.text(3.95, moisture_tail + 0.0007, f"末1 h均值 {moisture_tail:.5f}", ha="right", va="bottom", fontsize=6.5, color=COLORS["neutral"])
     ax.set(xlim=(0, 4), ylim=(0.017, 0.053), xlabel="时间 (h)", ylabel="烘房水分浓度 (kg/kg)", title="水分浓度响应")
     ax.xaxis.set_major_locator(MultipleLocator(1))
     ax.yaxis.set_major_locator(MultipleLocator(0.01))
     finish_axis(ax)
     panel_label(ax, "b")
 
-    fig.suptitle("烘房环境在约1.7 h内逐步趋于稳定", x=0.09, y=0.965, ha="left", fontsize=10.5, fontweight="bold", color="#101828")
-    fig.text(0.09, 0.075, "全部241个观测点，采样间隔60 s；实线连接原始清洗数据，未进行平滑。浅色横带为稳定带，米色竖带为预热区间。", fontsize=6.5, color="#667085")
-    export_figure(fig, output_dir, "图1_烘房环境时间演化")
+    fig.suptitle("烘房环境随时间变化", x=0.09, y=0.965, ha="left", fontsize=10.5, fontweight="bold", color="#101828")
+    export_figure(fig, output_dir, "图1_烘房环境随时间变化")
     plt.close(fig)
 
 
@@ -159,9 +151,8 @@ def make_radius_figure(radius: pd.DataFrame, output_dir: Path) -> None:
     milestones = [(2.5, "50%"), (10.0, "90%"), (22.0, "99%")]
 
     fig, ax = plt.subplots(figsize=(5.9055, 3.3858), constrained_layout=False)
-    fig.subplots_adjust(left=0.12, right=0.975, bottom=0.22, top=0.83)
+    fig.subplots_adjust(left=0.12, right=0.975, bottom=0.16, top=0.83)
 
-    ax.axvspan(35, 72, color=COLORS["plateau"], zorder=0)
     ax.fill_between(time_h, radius_cm, radius_cm[-1], color=COLORS["radius"], alpha=0.10, zorder=1)
     ax.plot(time_h, radius_cm, color=COLORS["radius"], lw=1.7, zorder=3)
     ax.scatter(time_h, radius_cm, color=COLORS["radius"], s=5.0, alpha=0.55, linewidths=0, zorder=2)
@@ -173,16 +164,13 @@ def make_radius_figure(radius: pd.DataFrame, output_dir: Path) -> None:
         ax.scatter([milestone_h], [value], s=22, facecolor="white", edgecolor=COLORS["accent"], linewidth=1.0, zorder=5)
         ax.annotate(f"完成总收缩{label}\n{milestone_h:g} h, {value:.3f} cm", xy=(milestone_h, value), xytext=(text_x, text_y), fontsize=6.5, color="#694A13", arrowprops={"arrowstyle": "-", "lw": 0.7, "color": COLORS["accent"]})
 
-    ax.axvline(35, color=COLORS["neutral"], lw=0.8, ls=(0, (3, 3)), zorder=1)
-    ax.text(53.5, 1.93, "近稳定区间\nr ≈ 1.20 cm", ha="center", va="top", fontsize=7, color=COLORS["radius"])
-    ax.text(71.5, radius_cm[-1] - 0.025, f"72 h: {radius_cm[-1]:.3f} cm", ha="right", va="top", fontsize=6.5, color=COLORS["radius"])
+    ax.text(71.5, radius_cm[-1] + 0.025, f"接近稳定值 {radius_cm[-1]:.3f} cm", ha="right", va="bottom", fontsize=6.5, color=COLORS["radius"])
     ax.set(xlim=(0, 72), ylim=(1.14, 2.04), xlabel="烘干时间 (h)", ylabel="药材半径 (cm)")
     ax.xaxis.set_major_locator(MultipleLocator(12))
     ax.yaxis.set_major_locator(MultipleLocator(0.2))
     finish_axis(ax)
-    fig.suptitle("药材半径收缩集中于烘干早期并逐渐进入平台", x=0.12, y=0.955, ha="left", fontsize=10.5, fontweight="bold", color="#101828")
-    fig.text(0.12, 0.075, "全部145个观测点，采样间隔0.5 h；实线连接原始清洗数据，未进行平滑。收缩完成度以2.000–1.198 cm为总变化范围。", fontsize=6.5, color="#667085")
-    export_figure(fig, output_dir, "图2_药材半径收缩")
+    fig.suptitle("药材半径随时间变化", x=0.12, y=0.955, ha="left", fontsize=10.5, fontweight="bold", color="#101828")
+    export_figure(fig, output_dir, "图2_药材半径随时间变化")
     plt.close(fig)
 
 
