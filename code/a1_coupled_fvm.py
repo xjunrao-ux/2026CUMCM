@@ -389,6 +389,116 @@ def write_table_csv(
             writer.writerow([f"{time_s:.0f}", *[f"{value:.4f}" for value in row]])
 
 
+def calculate_surface_fluxes(
+    environment: EnvironmentData,
+    temperature: heat.SimulationResult,
+    moisture: MoistureResult,
+) -> dict[str, np.ndarray]:
+    """Calculate convective boundary fluxes on the common 1 s time grid.
+
+    Heat flux is positive into the herb.  Moisture flux is positive out of the
+    herb.  Because C is a dry-basis mass ratio, the constitutive boundary flux
+    h_m(C_s-C_inf) is also retained before conversion with the supplied density.
+    """
+    if not np.array_equal(temperature.times_s, moisture.times_s):
+        raise ValueError("Temperature and moisture outputs must share a time grid.")
+
+    times_s = temperature.times_s
+    oven_temperature_c = np.interp(
+        times_s, environment.times_s, environment.temperature_c
+    )
+    oven_moisture_kg_kg = np.interp(
+        times_s, environment.times_s, environment.moisture_kg_kg
+    )
+    surface_temperature_c = temperature.temperature_c[:, -1]
+    surface_moisture_kg_kg = moisture.surface_moisture_kg_kg
+
+    heat_flux_into_herb_w_m2 = heat.CONVECTION_COEFFICIENT_W_M2_K * (
+        oven_temperature_c - surface_temperature_c
+    )
+    moisture_ratio_flux_out_m_s = MASS_TRANSFER_COEFFICIENT_M_S * (
+        surface_moisture_kg_kg - oven_moisture_kg_kg
+    )
+    moisture_mass_flux_out_kg_m2_s = (
+        heat.DENSITY_KG_M3 * moisture_ratio_flux_out_m_s
+    )
+
+    return {
+        "time_s": times_s,
+        "oven_temperature_c": oven_temperature_c,
+        "surface_temperature_c": surface_temperature_c,
+        "heat_flux_into_herb_w_m2": heat_flux_into_herb_w_m2,
+        "oven_moisture_kg_kg": oven_moisture_kg_kg,
+        "surface_moisture_kg_kg": surface_moisture_kg_kg,
+        "moisture_ratio_flux_out_m_s": moisture_ratio_flux_out_m_s,
+        "moisture_mass_flux_out_kg_m2_s": moisture_mass_flux_out_kg_m2_s,
+    }
+
+
+def write_surface_flux_csv(path: Path, fluxes: dict[str, np.ndarray]) -> None:
+    """Write one-second surface boundary states and fluxes to CSV."""
+    headers = list(fluxes)
+    arrays = [fluxes[name] for name in headers]
+    with path.open("w", newline="", encoding="utf-8-sig") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(headers)
+        for row in zip(*arrays):
+            writer.writerow(
+                [f"{row[0]:.0f}", *[f"{value:.10g}" for value in row[1:]]]
+            )
+
+
+def render_surface_flux_png(
+    path: Path,
+    fluxes: dict[str, np.ndarray],
+) -> None:
+    """Plot heat input and moisture outflow fluxes as complementary panels."""
+    configure_fonts()
+    time_minutes = fluxes["time_s"] / 60.0
+    heat_flux = fluxes["heat_flux_into_herb_w_m2"]
+    moisture_flux_g_m2_s = (
+        1000.0 * fluxes["moisture_mass_flux_out_kg_m2_s"]
+    )
+
+    figure, axes = plt.subplots(
+        1, 2, figsize=(7.09, 3.25), constrained_layout=True
+    )
+    axes[0].plot(time_minutes, heat_flux, color="#D55E00", linewidth=1.5)
+    axes[0].fill_between(
+        time_minutes, 0.0, heat_flux, color="#E69F00", alpha=0.16, linewidth=0
+    )
+    axes[0].set(
+        title="(a) 进入药材的表面热流密度",
+        xlabel="时间 / min",
+        ylabel="热流密度 / (W/m²)",
+        xlim=(0.0, END_TIME_S / 60.0),
+    )
+
+    axes[1].plot(
+        time_minutes, moisture_flux_g_m2_s, color="#009E73", linewidth=1.5
+    )
+    axes[1].fill_between(
+        time_minutes,
+        0.0,
+        moisture_flux_g_m2_s,
+        color="#009E73",
+        alpha=0.14,
+        linewidth=0,
+    )
+    axes[1].set(
+        title="(b) 离开药材的表面水分通量",
+        xlabel="时间 / min",
+        ylabel="水分质量通量 / [g/(m²·s)]",
+        xlim=(0.0, END_TIME_S / 60.0),
+    )
+    for axis in axes:
+        style_axis(axis)
+        axis.axhline(0.0, color="#555555", linewidth=0.65)
+        axis.set_xticks(np.arange(0.0, 31.0, 5.0))
+    figure.savefig(path, dpi=300, facecolor="white")
+    plt.close(figure)
+
+
 def render_table_png(
     path: Path,
     table_number: int,
@@ -871,6 +981,11 @@ def main() -> None:
         moisture.times_s,
         np.array([0.0, 2.0]),
     )
+    surface_fluxes = calculate_surface_fluxes(
+        environment,
+        temperature,
+        moisture,
+    )
 
     write_field_csv(
         result_dir / "temperature_full_1s_0p1cm.csv",
@@ -895,6 +1010,10 @@ def main() -> None:
         TABLE_TIMES_S,
         TABLE_RADII_CM,
         moisture_table,
+    )
+    write_surface_flux_csv(
+        result_dir / "surface_fluxes_1s.csv",
+        surface_fluxes,
     )
     render_table_png(
         picture_dir / "table1_temperature.png",
@@ -940,6 +1059,10 @@ def main() -> None:
         temperature.times_s,
         temperature_center_surface,
         moisture_center_surface,
+    )
+    render_surface_flux_png(
+        picture_dir / "surface_heat_moisture_flux.png",
+        surface_fluxes,
     )
 
     validation = build_validation(
