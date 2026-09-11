@@ -11,29 +11,29 @@
     "moisture_radial_grid": "quadratically clustered toward the surface"
   },
   "moisture_grid_refinement": {
-    "coarse_to_production_maximum_change_kg_kg": 0.0009288020674032005,
-    "coarse_to_production_mean_change_kg_kg": 6.803572697627961e-05,
-    "table2_maximum_change_kg_kg": 0.0007695555962292655,
-    "table2_mean_change_kg_kg": 9.683460907567363e-05
+    "coarse_to_production_maximum_change_kg_kg": 0.0002612321646378035,
+    "coarse_to_production_mean_change_kg_kg": 4.891695412958404e-05,
+    "table2_maximum_change_kg_kg": 0.00016456395894293152,
+    "table2_mean_change_kg_kg": 4.573281090519846e-05
   },
   "moisture_balance_per_unit_length": {
-    "stored_change_integral": -0.00026209261925011544,
-    "integrated_boundary_outflow": 0.00026209261925020435,
-    "residual": 8.890457814381136e-17,
-    "relative_residual": 3.392105370923834e-13
+    "stored_change_integral": -0.0003222459941415546,
+    "integrated_boundary_outflow": 0.00032224599414157286,
+    "residual": 1.826880660638075e-17,
+    "relative_residual": 5.6692113908341356e-14
   },
   "moisture_checks": {
-    "minimum_kg_kg": 1.2007342454007617,
-    "maximum_kg_kg": 2.5500000000000886,
-    "center_1800_s_kg_kg": 2.5499999999999936,
-    "surface_1800_s_kg_kg": 1.2007342454007617,
-    "volume_average_1800_s_kg_kg": 2.3414333204922104,
-    "minimum_diffusivity_m2_s": 7.23546943625161e-10,
-    "maximum_diffusivity_m2_s": 2.4042948782411456e-09,
+    "minimum_kg_kg": 1.5102202149810984,
+    "maximum_kg_kg": 2.550000000000031,
+    "center_1800_s_kg_kg": 2.549992114946835,
+    "surface_1800_s_kg_kg": 1.5102202149810984,
+    "volume_average_1800_s_kg_kg": 2.293564785704048,
+    "minimum_diffusivity_m2_s": 3.882938142760523e-09,
+    "maximum_diffusivity_m2_s": 4.9376550941739595e-09,
     "radial_order_violation_count": 0,
     "time_monotonicity_violation_count": 0,
     "below_environment_violation_count": 0,
-    "maximum_picard_iterations": 5
+    "maximum_picard_iterations": 4
   },
   "temperature_selected_outputs": {
     "center_1800_s_C": 33.57563542478613,

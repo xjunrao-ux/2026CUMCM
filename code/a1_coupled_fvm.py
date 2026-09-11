@@ -6,7 +6,7 @@ measured oven environment, but the supplied constitutive laws contain no
 temperature-moisture cross term.  Therefore this script performs a synchronized
 co-simulation without inventing an unprovided latent-heat parameter.
 
-Outputs are restricted to CSV/JSON data and PNG tables as requested.
+Outputs are restricted to CSV/JSON data and PNG figures as requested.
 """
 
 from __future__ import annotations
@@ -18,6 +18,9 @@ import math
 from dataclasses import dataclass
 from pathlib import Path
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import numpy as np
@@ -55,7 +58,7 @@ class MoistureResult:
 
 
 def configure_fonts() -> None:
-    """Choose a local CJK-capable font and compact competition-table styling."""
+    """Choose a local CJK-capable font and competition-paper styling."""
     available = {font.name for font in fm.fontManager.ttflist}
     candidates = ["Microsoft YaHei", "SimHei", "Arial", "DejaVu Sans"]
     selected = [name for name in candidates if name in available]
@@ -64,6 +67,15 @@ def configure_fonts() -> None:
             "font.family": "sans-serif",
             "font.sans-serif": selected or ["DejaVu Sans"],
             "axes.unicode_minus": False,
+            "svg.fonttype": "none",
+            "pdf.fonttype": 42,
+            "font.size": 8.0,
+            "axes.labelsize": 8.0,
+            "axes.titlesize": 9.0,
+            "xtick.labelsize": 7.0,
+            "ytick.labelsize": 7.0,
+            "legend.fontsize": 7.0,
+            "axes.linewidth": 0.7,
         }
     )
 
@@ -105,8 +117,11 @@ def load_environment(path: Path) -> EnvironmentData:
 
 
 def moisture_diffusivity(moisture_kg_kg: np.ndarray) -> np.ndarray:
-    """Appendix 2 empirical diffusivity D=7e-9 exp(-0.89 C), in m2/s."""
-    return 7.0e-9 * np.exp(-0.89 * moisture_kg_kg)
+    """Appendix 2 empirical diffusivity D=7e-9 exp(-0.89/C), in m2/s."""
+    moisture = np.asarray(moisture_kg_kg, dtype=float)
+    if np.any(moisture <= 0.0):
+        raise ValueError("Moisture concentration must remain positive in D(C).")
+    return 7.0e-9 * np.exp(-0.89 / moisture)
 
 
 def factor_tridiagonal(
@@ -440,6 +455,185 @@ def render_table_png(
     plt.close(figure)
 
 
+def style_axis(axis: plt.Axes) -> None:
+    """Apply restrained paper-ready axis styling."""
+    axis.grid(True, color="#D9D9D9", linewidth=0.45, alpha=0.75)
+    axis.set_axisbelow(True)
+    axis.spines["top"].set_visible(False)
+    axis.spines["right"].set_visible(False)
+
+
+def render_heatmap_png(
+    path: Path,
+    times_s: np.ndarray,
+    radii_cm: np.ndarray,
+    values: np.ndarray,
+    title: str,
+    colorbar_label: str,
+    cmap: str,
+) -> None:
+    """Render a continuous time-radius field as a 300-dpi PNG heatmap."""
+    configure_fonts()
+    figure, axis = plt.subplots(figsize=(7.09, 3.95), constrained_layout=True)
+    image = axis.pcolormesh(
+        times_s / 60.0,
+        radii_cm,
+        values.T,
+        shading="auto",
+        cmap=cmap,
+        rasterized=True,
+    )
+    colorbar = figure.colorbar(image, ax=axis, pad=0.025, aspect=28)
+    colorbar.set_label(colorbar_label)
+    colorbar.outline.set_linewidth(0.6)
+    axis.set(
+        xlabel="时间 / min",
+        ylabel="到药材中心的距离 / cm",
+        title=title,
+        xlim=(0.0, END_TIME_S / 60.0),
+        ylim=(0.0, RADIUS_M * 100.0),
+    )
+    axis.set_xticks(np.arange(0.0, 31.0, 5.0))
+    axis.set_yticks(np.arange(0.0, 2.01, 0.5))
+    figure.savefig(path, dpi=300, facecolor="white")
+    plt.close(figure)
+
+
+def render_radial_profiles_png(
+    path: Path,
+    radii_cm: np.ndarray,
+    temperature_profiles: np.ndarray,
+    moisture_profiles: np.ndarray,
+) -> None:
+    """Compare radial profiles at the seven reporting times."""
+    configure_fonts()
+    figure, axes = plt.subplots(
+        1, 2, figsize=(7.09, 3.25), constrained_layout=True
+    )
+    colors = plt.get_cmap("viridis")(np.linspace(0.08, 0.92, TABLE_TIMES_S.size))
+    for index, (time_s, color) in enumerate(zip(TABLE_TIMES_S, colors)):
+        label = f"{time_s:g} s" if time_s % 60 else f"{time_s / 60:g} min"
+        axes[0].plot(
+            radii_cm,
+            temperature_profiles[index],
+            color=color,
+            linewidth=1.35,
+            label=label,
+        )
+        axes[1].plot(
+            radii_cm,
+            moisture_profiles[index],
+            color=color,
+            linewidth=1.35,
+            label=label,
+        )
+
+    axes[0].set(
+        title="(a) 温度径向分布",
+        xlabel="到药材中心的距离 / cm",
+        ylabel="温度 / °C",
+        xlim=(0.0, 2.0),
+    )
+    axes[1].set(
+        title="(b) 水分浓度径向分布",
+        xlabel="到药材中心的距离 / cm",
+        ylabel="水分浓度 / (kg/kg)",
+        xlim=(0.0, 2.0),
+    )
+    for axis in axes:
+        style_axis(axis)
+        axis.set_xticks(np.arange(0.0, 2.01, 0.5))
+    axes[0].legend(frameon=False, ncol=2, loc="upper left")
+    axes[1].legend(frameon=False, ncol=2, loc="lower left")
+    figure.savefig(path, dpi=300, facecolor="white")
+    plt.close(figure)
+
+
+def render_center_surface_evolution_png(
+    path: Path,
+    environment: EnvironmentData,
+    times_s: np.ndarray,
+    temperature_center_surface: np.ndarray,
+    moisture_center_surface: np.ndarray,
+) -> None:
+    """Show boundary forcing and the delayed responses at centre and surface."""
+    configure_fonts()
+    time_minutes = times_s / 60.0
+    oven_temperature = np.interp(
+        times_s, environment.times_s, environment.temperature_c
+    )
+    oven_moisture = np.interp(
+        times_s, environment.times_s, environment.moisture_kg_kg
+    )
+    figure, axes = plt.subplots(
+        1, 2, figsize=(7.09, 3.25), constrained_layout=True
+    )
+
+    axes[0].plot(
+        time_minutes,
+        oven_temperature,
+        color="#555555",
+        linestyle="--",
+        linewidth=1.2,
+        label="烘房空气",
+    )
+    axes[0].plot(
+        time_minutes,
+        temperature_center_surface[:, 1],
+        color="#D55E00",
+        linewidth=1.5,
+        label="药材表面",
+    )
+    axes[0].plot(
+        time_minutes,
+        temperature_center_surface[:, 0],
+        color="#0072B2",
+        linewidth=1.5,
+        label="药材中心",
+    )
+    axes[0].set(
+        title="(a) 中心与表面温度响应",
+        xlabel="时间 / min",
+        ylabel="温度 / °C",
+        xlim=(0.0, 30.0),
+    )
+
+    axes[1].plot(
+        time_minutes,
+        oven_moisture,
+        color="#555555",
+        linestyle="--",
+        linewidth=1.2,
+        label="烘房空气",
+    )
+    axes[1].plot(
+        time_minutes,
+        moisture_center_surface[:, 1],
+        color="#009E73",
+        linewidth=1.5,
+        label="药材表面",
+    )
+    axes[1].plot(
+        time_minutes,
+        moisture_center_surface[:, 0],
+        color="#0072B2",
+        linewidth=1.5,
+        label="药材中心",
+    )
+    axes[1].set(
+        title="(b) 中心与表面水分响应",
+        xlabel="时间 / min",
+        ylabel="水分浓度 / (kg/kg)",
+        xlim=(0.0, 30.0),
+    )
+    for axis in axes:
+        style_axis(axis)
+        axis.set_xticks(np.arange(0.0, 31.0, 5.0))
+        axis.legend(frameon=False, loc="best")
+    figure.savefig(path, dpi=300, facecolor="white")
+    plt.close(figure)
+
+
 def build_validation(
     environment: EnvironmentData,
     temperature: heat.SimulationResult,
@@ -640,6 +834,44 @@ def main() -> None:
         TABLE_RADII_CM,
     )
 
+    visual_radii_cm = np.linspace(0.0, 2.0, 201)
+    temperature_visual = sample_field(
+        temperature.times_s,
+        temperature.radii_m,
+        temperature.temperature_c,
+        temperature.times_s,
+        visual_radii_cm,
+    )
+    moisture_visual = sample_moisture_field(
+        moisture,
+        moisture.times_s,
+        visual_radii_cm,
+    )
+    temperature_profiles = sample_field(
+        temperature.times_s,
+        temperature.radii_m,
+        temperature.temperature_c,
+        TABLE_TIMES_S,
+        visual_radii_cm,
+    )
+    moisture_profiles = sample_moisture_field(
+        moisture,
+        TABLE_TIMES_S,
+        visual_radii_cm,
+    )
+    temperature_center_surface = sample_field(
+        temperature.times_s,
+        temperature.radii_m,
+        temperature.temperature_c,
+        temperature.times_s,
+        np.array([0.0, 2.0]),
+    )
+    moisture_center_surface = sample_moisture_field(
+        moisture,
+        moisture.times_s,
+        np.array([0.0, 2.0]),
+    )
+
     write_field_csv(
         result_dir / "temperature_full_1s_0p1cm.csv",
         temperature.times_s,
@@ -678,6 +910,37 @@ def main() -> None:
         "单位：kg/kg",
         moisture_table,
     )
+    render_heatmap_png(
+        picture_dir / "temperature_heatmap.png",
+        temperature.times_s,
+        visual_radii_cm,
+        temperature_visual,
+        "30分钟内药材温度的时空变化",
+        "温度 / °C",
+        "inferno",
+    )
+    render_heatmap_png(
+        picture_dir / "moisture_heatmap.png",
+        moisture.times_s,
+        visual_radii_cm,
+        moisture_visual,
+        "30分钟内药材水分浓度的时空变化",
+        "水分浓度 / (kg/kg)",
+        "viridis",
+    )
+    render_radial_profiles_png(
+        picture_dir / "radial_profiles.png",
+        visual_radii_cm,
+        temperature_profiles,
+        moisture_profiles,
+    )
+    render_center_surface_evolution_png(
+        picture_dir / "center_surface_evolution.png",
+        environment,
+        temperature.times_s,
+        temperature_center_surface,
+        moisture_center_surface,
+    )
 
     validation = build_validation(
         environment, temperature, moisture_coarse, moisture
@@ -692,7 +955,7 @@ def main() -> None:
     print("\nValidation summary")
     print(json.dumps(validation, ensure_ascii=False, indent=2))
     print(f"\nResults: {result_dir}")
-    print(f"PNG tables: {picture_dir}")
+    print(f"PNG figures: {picture_dir}")
 
 
 if __name__ == "__main__":
