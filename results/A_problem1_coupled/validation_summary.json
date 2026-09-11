@@ -1,0 +1,43 @@
+{
+  "model_scope": {
+    "geometry": "one-dimensional axisymmetric cylinder",
+    "temperature_equation": "transient conduction with convective boundary",
+    "moisture_equation": "nonlinear Fick diffusion with convective mass boundary",
+    "coupling": "synchronized co-simulation; Appendix 2 supplies no latent-heat or temperature-dependent moisture term",
+    "production_nominal_radial_step_cm": 0.0125,
+    "production_time_step_s": 0.125,
+    "coarse_nominal_radial_step_cm": 0.025,
+    "coarse_time_step_s": 0.25,
+    "moisture_radial_grid": "quadratically clustered toward the surface"
+  },
+  "moisture_grid_refinement": {
+    "coarse_to_production_maximum_change_kg_kg": 0.0009288020674032005,
+    "coarse_to_production_mean_change_kg_kg": 6.803572697627961e-05,
+    "table2_maximum_change_kg_kg": 0.0007695555962292655,
+    "table2_mean_change_kg_kg": 9.683460907567363e-05
+  },
+  "moisture_balance_per_unit_length": {
+    "stored_change_integral": -0.00026209261925011544,
+    "integrated_boundary_outflow": 0.00026209261925020435,
+    "residual": 8.890457814381136e-17,
+    "relative_residual": 3.392105370923834e-13
+  },
+  "moisture_checks": {
+    "minimum_kg_kg": 1.2007342454007617,
+    "maximum_kg_kg": 2.5500000000000886,
+    "center_1800_s_kg_kg": 2.5499999999999936,
+    "surface_1800_s_kg_kg": 1.2007342454007617,
+    "volume_average_1800_s_kg_kg": 2.3414333204922104,
+    "minimum_diffusivity_m2_s": 7.23546943625161e-10,
+    "maximum_diffusivity_m2_s": 2.4042948782411456e-09,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "below_environment_violation_count": 0,
+    "maximum_picard_iterations": 5
+  },
+  "temperature_selected_outputs": {
+    "center_1800_s_C": 33.57563542478613,
+    "surface_1800_s_C": 36.785720362695955,
+    "oven_1800_s_C": 41.513
+  }
+}
