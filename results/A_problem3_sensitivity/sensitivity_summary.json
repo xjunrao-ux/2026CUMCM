@@ -1,0 +1,53 @@
+{
+  "method": {
+    "parameter_sweep_grid": "verified coarse grid: 0.025 cm; 2/60/2 s",
+    "correction": "fine baseline plus coarse scenario change from coarse baseline",
+    "temperature_deltas_C": [
+      -4.0,
+      -2.0,
+      0.0,
+      2.0,
+      4.0
+    ],
+    "moisture_factors": [
+      0.7,
+      0.85,
+      1.0,
+      1.15,
+      1.3
+    ],
+    "averaging_windows_h": [
+      0.25,
+      0.5,
+      1.0,
+      1.5,
+      2.0
+    ]
+  },
+  "baseline": {
+    "plateau_temperature_C": 49.99591666666667,
+    "plateau_moisture_kg_kg": 0.04999041666666666,
+    "fine_drying_time_h": 57.50472222222222,
+    "coarse_drying_time_h": 57.5333333333,
+    "additive_correction_h": -0.028611111077779583
+  },
+  "local_sensitivity": {
+    "temperature_hours_per_C": -1.829305555574999,
+    "moisture_hours_per_0p01_kg_kg": 0.2030018716253982,
+    "temperature_normalized_sensitivity": -1.590439960060444,
+    "moisture_normalized_sensitivity": 0.01764750398662941
+  },
+  "joint_range": {
+    "minimum_corrected_drying_time_h": 50.56027777782222,
+    "minimum_temperature_C": 53.9959166667,
+    "minimum_moisture_kg_kg": 0.0349932917,
+    "maximum_corrected_drying_time_h": 65.91527777782223,
+    "maximum_temperature_C": 45.9959166667,
+    "maximum_moisture_kg_kg": 0.0649875417
+  },
+  "averaging_window": {
+    "minimum_drying_time_h": 57.480277777822224,
+    "maximum_drying_time_h": 57.55305555562222,
+    "range_h": 0.07277777779999894
+  }
+}
