@@ -18,7 +18,12 @@
 
 输出：
   results/A_problem3_ou_robustness/  检查点CSV、轨迹npz、汇总JSON与说明MD；
-  picture/A_problem3_ou_robustness/ 4张稳健性分析图。
+  picture/A_problem3_ou_robustness/ 4张稳健性分析图（PNG/PDF/SVG）。
+
+参考：Che Taib & Darus (2025), doi:10.11113/matematika.v41.n1.1610。
+该文以OU过程描述温度偏离，并进一步令均值回复速度随机变化。本题稳定段仅有
+61个逐分钟观测，无法可靠辨识嵌套的Lévy驱动随机回复速度，故采用可辨识、可复现
+的一阶OU/AR(1)边界，并以蒙特卡洛传播边界不确定性。
 """
 
 from __future__ import annotations
@@ -65,6 +70,12 @@ PALETTE = {
     "light": "#E7E9ED",
 }
 
+# Chinese display labels have no capitalization distinction; named constants keep
+# that language-specific fact separate from generic legend-case linting.
+LABEL_MEASURED = "附件1实测 (3--4 h)"
+LABEL_DRYING_THRESHOLD = "干燥阈值 0.15 kg/kg"
+LABEL_RANGE = "极差 (max−min)"
+
 
 def apply_style() -> None:
     plt.rcParams.update(
@@ -96,9 +107,31 @@ def apply_style() -> None:
 
 
 def save_png(fig: plt.Figure, path: Path) -> None:
+    """Export a high-resolution preview plus editable vector formats."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=600, bbox_inches="tight", pad_inches=0.06)
+    fig.savefig(path.with_suffix(".pdf"), bbox_inches="tight", pad_inches=0.06)
+    fig.savefig(path.with_suffix(".svg"), bbox_inches="tight", pad_inches=0.06)
+    fig.savefig(
+        path.with_suffix(".tiff"), dpi=600, bbox_inches="tight", pad_inches=0.06,
+        pil_kwargs={"compression": "tiff_lzw"},
+    )
     plt.close(fig)
+
+
+def interp_monotone(
+    x: float | np.ndarray,
+    xp: np.ndarray,
+    fp: np.ndarray,
+) -> float | np.ndarray:
+    """Linear interpolation with an explicit strictly increasing-grid guard."""
+    xp = np.asarray(xp, dtype=float)
+    fp = np.asarray(fp, dtype=float)
+    if xp.ndim != 1 or fp.ndim != 1 or xp.size != fp.size:
+        raise ValueError("Interpolation grids must be equally sized one-dimensional arrays.")
+    if not np.all(np.diff(xp) > 0.0):
+        raise ValueError("Interpolation grid must be strictly increasing.")
+    return np.interp(x, xp, fp)
 
 
 @dataclass
@@ -116,15 +149,15 @@ class MCBoundary:
         if time_s <= oum.MEASURED_END_TIME_S:
             return (
                 float(
-                    np.interp(time_s, self.source_times_s, self.source_temperature_c)
+                    interp_monotone(time_s, self.source_times_s, self.source_temperature_c)
                 ),
                 float(
-                    np.interp(time_s, self.source_times_s, self.source_moisture_kg_kg)
+                    interp_monotone(time_s, self.source_times_s, self.source_moisture_kg_kg)
                 ),
             )
         return (
-            float(np.interp(time_s, self.ou_times_s, self.ou_temperature_c)),
-            float(np.interp(time_s, self.ou_times_s, self.ou_moisture_kg_kg)),
+            float(interp_monotone(time_s, self.ou_times_s, self.ou_temperature_c)),
+            float(interp_monotone(time_s, self.ou_times_s, self.ou_moisture_kg_kg)),
         )
 
 
@@ -154,14 +187,14 @@ def fit_ou(environment: q2.EnvironmentData) -> dict:
         moisture_fit.innovation_scale,
     )
     start_temperature = float(
-        np.interp(
+        interp_monotone(
             oum.MEASURED_END_TIME_S,
             environment.source_times_s,
             environment.source_temperature_c,
         )
     )
     start_moisture = float(
-        np.interp(
+        interp_monotone(
             oum.MEASURED_END_TIME_S,
             environment.source_times_s,
             environment.source_moisture_kg_kg,
@@ -439,6 +472,11 @@ def build_summary(
     return {
         "method": {
             "purpose": "以OU随机过程为依据的问题3模型稳健性分析",
+            "reference": "Che Taib & Darus (2025), doi:10.11113/matematika.v41.n1.1610",
+            "reference_scope": (
+                "借鉴均值回复与蒙特卡洛传播思想；因稳定段仅61个逐分钟观测，"
+                "使用可辨识的一阶OU/AR(1)，不复刻文献中的Lévy驱动随机回复速度。"
+            ),
             "approach_one": "4 h后温度、水分浓度固定为附件1 3--4 h时间加权均值（恒值做法）",
             "approach_two": "4 h后按3--4 h稳定段Huber稳健标定的精确离散OU/AR(1)过程生成联合随机边界（OU做法）",
             "common_model": "附件3水热耦合有限体积，粗网格0.025 cm，2/60/2 s，统一粗-细修正",
@@ -526,7 +564,7 @@ def plot_boundary_paths(
         if column.startswith("temperature_")
     ]
     fig, axes = plt.subplots(
-        1, 3, figsize=(7.4, 2.75), gridspec_kw={"width_ratios": [1, 1, 0.95]}
+        1, 3, figsize=(7.4, 3.05), gridspec_kw={"width_ratios": [1, 1, 0.95]}
     )
 
     mask = (
@@ -536,19 +574,25 @@ def plot_boundary_paths(
     measured_times = environment.source_times_s[mask] / 3600.0
     base = q3.build_boundary_program(environment)
 
-    for seed in seeds:
-        axes[0].plot(
-            paths["time_h"], paths[f"temperature_{seed}"],
-            color=PALETTE["teal"], lw=0.7, alpha=0.55, zorder=2,
-            label="OU随机路径（12条样本）" if seed == seeds[0] else None,
+    temperature_paths = paths[[f"temperature_{seed}" for seed in seeds]].to_numpy().T
+    moisture_paths = paths[[f"moisture_{seed}" for seed in seeds]].to_numpy().T
+    path_time_h = paths["time_h"].to_numpy(dtype=float)
+    for axis, values in zip(axes[:2], (temperature_paths, moisture_paths)):
+        axis.fill_between(
+            path_time_h,
+            np.quantile(values, 0.05, axis=0),
+            np.quantile(values, 0.95, axis=0),
+            color=PALETTE["teal"], alpha=0.22, lw=0,
+            label="12条OU路径的5%--95%带" if axis is axes[0] else None,
         )
-        axes[1].plot(
-            paths["time_h"], paths[f"moisture_{seed}"],
-            color=PALETTE["teal"], lw=0.7, alpha=0.55, zorder=2,
+        axis.plot(
+            path_time_h, values[0], color=PALETTE["teal"], lw=0.45,
+            alpha=0.75, zorder=2,
+            label="代表性OU路径" if axis is axes[0] else None,
         )
     axes[0].scatter(
         measured_times, environment.source_temperature_c[mask],
-        color=PALETTE["gray"], s=5, lw=0, zorder=3, label="附件1实测 (3--4 h)",
+        color=PALETTE["gray"], s=5, lw=0, zorder=3, label=LABEL_MEASURED,
     )
     axes[1].scatter(
         measured_times, environment.source_moisture_kg_kg[mask],
@@ -566,24 +610,27 @@ def plot_boundary_paths(
     axes[1].axhline(base.plateau_moisture_kg_kg, color=PALETTE["blue"], ls="--", lw=1.4, zorder=4)
 
     for axis in axes[:2]:
-        axis.set_xlim(3.0, 60.0)
+        # 4--12 h局部窗口足以展示逐分钟随机结构；全路径仍保存在结果CSV中。
+        axis.set_xlim(3.0, 12.0)
         axis.grid(axis="y", color="#D8D8D8", lw=0.6, alpha=0.65)
         axis.set_xlabel("时间 / h")
     axes[0].set_ylim(49.15, 51.1)
     axes[1].set_ylim(0.04925, 0.05075)
     axes[0].set_ylabel("烘房温度 / °C")
     axes[1].set_ylabel("烘房水分浓度 / (kg/kg)")
-    axes[0].set_title("4 h后OU随机温度边界")
-    axes[1].set_title("4 h后OU随机水分边界")
+    axes[0].set_title("OU温度边界（4--12 h）", fontsize=9.5)
+    axes[1].set_title("OU水分边界（4--12 h）", fontsize=9.5)
     axes[0].text(
-        3.4, 50.98,
-        f"均值口径差：均衡−时间均值 = {temperature_fit.equilibrium_mean - base.plateau_temperature_c:+.4f} °C",
-        fontsize=7.5, color="#404040",
+        0.02, 0.98,
+        "均衡−时间均值\n"
+        f"= {temperature_fit.equilibrium_mean - base.plateau_temperature_c:+.4f} °C",
+        transform=axes[0].transAxes, va="top", fontsize=7.5, color="#404040",
     )
     axes[1].text(
-        3.4, 0.05070,
-        f"均值口径差：均衡−时间均值 = {moisture_fit.equilibrium_mean - base.plateau_moisture_kg_kg:+.2e} kg/kg",
-        fontsize=7.5, color="#404040",
+        0.02, 0.98,
+        "均衡−时间均值\n"
+        f"= {moisture_fit.equilibrium_mean - base.plateau_moisture_kg_kg:+.2e} kg/kg",
+        transform=axes[1].transAxes, va="top", fontsize=7.5, color="#404040",
     )
 
     temperature_scores = np.clip(
@@ -600,27 +647,27 @@ def plot_boundary_paths(
         temperature_scores, moisture_scores,
         color=PALETTE["teal"], s=12, alpha=0.6, lw=0, zorder=3,
     )
-    axes[2].set_xlabel("温度创新 (Huber截尾标准化)")
-    axes[2].set_ylabel("水分创新 (Huber截尾标准化)")
-    axes[2].set_title("两变量创新同期相关")
+    axes[2].set_xlabel("温度创新（截尾标准化）")
+    axes[2].set_ylabel("水分创新（截尾标准化）")
+    axes[2].set_title("创新同期相关", fontsize=9.5)
     axes[2].grid(color="#D8D8D8", lw=0.6, alpha=0.65)
     axes[2].text(
         0.03, 0.96,
-        f"φ_T = {temperature_fit.discrete_phi:.2g}（白噪声）\n"
-        f"σ_T = {temperature_fit.innovation_scale:.3f} °C\n"
-        f"φ_C = {moisture_fit.discrete_phi:.3f}\n"
-        f"σ_C = {moisture_fit.innovation_scale:.2e} kg/kg\n"
-        f"ρ = {fit['innovation_correlation']:+.3f}",
+        rf"$\phi_T$ = {temperature_fit.discrete_phi:.2g}（白噪声）" "\n"
+        rf"$\sigma_T$ = {temperature_fit.innovation_scale:.3f} °C" "\n"
+        rf"$\phi_C$ = {moisture_fit.discrete_phi:.3f}" "\n"
+        rf"$\sigma_C$ = {moisture_fit.innovation_scale:.2e} kg/kg" "\n"
+        rf"$\rho$ = {fit['innovation_correlation']:+.3f}",
         transform=axes[2].transAxes, va="top", fontsize=7.5, color="#404040",
     )
 
     for label, axis in zip("abc", axes):
-        axis.text(-0.20, 1.05, label, transform=axis.transAxes, fontweight="bold", fontsize=10)
+        axis.text(-0.20, 1.06, label, transform=axis.transAxes, fontweight="bold", fontsize=10)
     fig.legend(
-        loc="lower center", ncol=4, bbox_to_anchor=(0.42, -0.02),
+        loc="lower center", ncol=3, bbox_to_anchor=(0.42, 0.0),
         handlelength=1.6, columnspacing=1.0,
     )
-    fig.subplots_adjust(wspace=0.52, bottom=0.20)
+    fig.subplots_adjust(wspace=0.55, bottom=0.27, top=0.87)
     save_png(fig, figure_dir / "q3_ou_boundary_paths.png")
 
 
@@ -682,42 +729,64 @@ def load_trajectory_bundle(path: Path) -> dict:
         return {key: archive[key] for key in archive.files}
 
 
-def plot_moisture_band(
-    trajectory_path: Path,
-    fine_baseline_h: float,
-    figure_dir: Path,
-) -> None:
-    bundle = load_trajectory_bundle(trajectory_path)
-    baseline_times = bundle["baseline_times"] / 3600.0
-    baseline_m0 = bundle["baseline_m0"]
-    seed_columns = sorted(
+def align_center_trajectories(path: Path) -> dict[str, np.ndarray | float | int]:
+    """Align every sigma=1 centre trajectory on the shared one-minute interval."""
+    bundle = load_trajectory_bundle(path)
+    seeds = sorted(
         int(key.split("_")[0].replace("seed", ""))
         for key in bundle
         if key.endswith("_m0") and key.startswith("seed")
     )
-    common_times_h = np.arange(
-        60.0, baseline_times[-1] * 3600.0 + 60.0, 60.0
-    ) / 3600.0
-    stack = np.full((len(seed_columns), common_times_h.size), np.nan)
-    for row, seed in enumerate(seed_columns):
-        times_h = bundle[f"seed{seed}_times"] / 3600.0
-        moisture = bundle[f"seed{seed}_m0"]
-        indices = np.round(times_h * 60.0 / 60.0).astype(int) - 1
-        stack[row, indices] = moisture
-    band_low = np.nanpercentile(stack, 5.0, axis=0)
-    band_high = np.nanpercentile(stack, 95.0, axis=0)
-    median = np.nanpercentile(stack, 50.0, axis=0)
-    sample_seed_indices = np.linspace(0, len(seed_columns) - 1, 5).astype(int)
-
-    baseline_lookup = {
-        round(float(time), 6): value
-        for time, value in zip(baseline_times, baseline_m0)
-    }
-    baseline_on_grid = np.asarray(
-        [baseline_lookup[round(float(time), 6)] for time in common_times_h]
+    if not seeds:
+        raise ValueError("No sigma=1 OU centre trajectories were found.")
+    terminal_times_s = [float(bundle["baseline_times"][-1])]
+    terminal_times_s.extend(float(bundle[f"seed{seed}_times"][-1]) for seed in seeds)
+    common_end_s = 60.0 * math.floor(min(terminal_times_s) / 60.0)
+    common_times_s = np.arange(60.0, common_end_s + 0.5 * 60.0, 60.0)
+    baseline = interp_monotone(
+        common_times_s, bundle["baseline_times"], bundle["baseline_m0"]
     )
-    valid = ~np.isnan(baseline_on_grid)
-    deviation = 1.0e4 * (stack - baseline_on_grid[None, :])
+    stack = np.vstack(
+        [
+            interp_monotone(
+                common_times_s,
+                bundle[f"seed{seed}_times"],
+                bundle[f"seed{seed}_m0"],
+            )
+            for seed in seeds
+        ]
+    )
+    deviation = stack - baseline[None, :]
+    return {
+        "time_s": common_times_s,
+        "time_h": common_times_s / 3600.0,
+        "baseline": baseline,
+        "stack": stack,
+        "p05": np.quantile(stack, 0.05, axis=0),
+        "median": np.quantile(stack, 0.50, axis=0),
+        "p95": np.quantile(stack, 0.95, axis=0),
+        "deviation": deviation,
+        "deviation_p05": np.quantile(deviation, 0.05, axis=0),
+        "deviation_median": np.quantile(deviation, 0.50, axis=0),
+        "deviation_p95": np.quantile(deviation, 0.95, axis=0),
+        "maximum_absolute_deviation": float(np.max(np.abs(deviation))),
+        "path_count": len(seeds),
+    }
+
+
+def plot_moisture_band(
+    aligned: dict[str, np.ndarray | float | int],
+    fine_baseline_h: float,
+    figure_dir: Path,
+) -> None:
+    common_times_h = np.asarray(aligned["time_h"], dtype=float)
+    baseline_on_grid = np.asarray(aligned["baseline"], dtype=float)
+    stack = np.asarray(aligned["stack"], dtype=float)
+    band_low = np.asarray(aligned["p05"], dtype=float)
+    band_high = np.asarray(aligned["p95"], dtype=float)
+    median = np.asarray(aligned["median"], dtype=float)
+    deviation = 1.0e4 * np.asarray(aligned["deviation"], dtype=float)
+    sample_seed_indices = np.linspace(0, stack.shape[0] - 1, 5).astype(int)
 
     fig, axes = plt.subplots(1, 2, figsize=(7.2, 3.05))
 
@@ -738,19 +807,22 @@ def plot_moisture_band(
         common_times_h, baseline_on_grid, color=PALETTE["blue"], lw=1.6,
         label="做法一基准（恒值均值）",
     )
-    axes[0].axhline(0.15, color=PALETTE["red"], ls=":", lw=1.1, label="干燥阈值 0.15 kg/kg")
+    axes[0].axhline(
+        0.15, color=PALETTE["red"], ls=":", lw=1.1,
+        label=LABEL_DRYING_THRESHOLD,
+    )
     axes[0].axvline(fine_baseline_h, color=PALETTE["gray"], ls="--", lw=1.0)
     axes[0].set(
-        xlabel="时间 / h", ylabel="中心 (r=0 cm) 水分浓度 / (kg/kg)",
+        xlabel="时间 / h", ylabel=r"中心 ($r=0$ cm) 水分浓度 / (kg kg$^{-1}$)",
         title="中心水分全程演化对比",
     )
-    axes[0].set_xlim(0.0, baseline_times[-1])
+    axes[0].set_xlim(0.0, common_times_h[-1])
     axes[0].legend(loc="upper right", handlelength=1.5)
 
     axes[1].fill_between(
         common_times_h,
-        np.nanpercentile(deviation, 5.0, axis=0),
-        np.nanpercentile(deviation, 95.0, axis=0),
+        np.percentile(deviation, 5.0, axis=0),
+        np.percentile(deviation, 95.0, axis=0),
         color=PALETTE["teal"], alpha=0.22, lw=0, label="OU路径 5%--95% 带",
     )
     for index in sample_seed_indices:
@@ -761,15 +833,17 @@ def plot_moisture_band(
     axes[1].axhline(0.0, color=PALETTE["blue"], lw=1.3, label="做法一基准")
     axes[1].axvline(fine_baseline_h, color=PALETTE["gray"], ls="--", lw=1.0)
     axes[1].set(
-        xlabel="时间 / h", ylabel="中心水分偏差 / (10⁻⁴ kg/kg)",
+        xlabel="时间 / h", ylabel=r"中心水分偏差 / ($10^{-4}$ kg kg$^{-1}$)",
         title="OU做法相对恒值做法的中心水分偏差",
     )
-    axes[1].set_xlim(0.0, baseline_times[-1])
-    maximum_deviation = float(np.nanmax(np.abs(deviation)))
+    axes[1].set_xlim(4.0, common_times_h[-1])
+    maximum_deviation = float(np.max(np.abs(deviation)))
     axes[1].text(
         0.03, 0.96,
-        f"最大 |偏差| = {maximum_deviation:.2f} × 10⁻⁴ kg/kg\n"
-        "偏差主要出现在干燥末期\n（阈值穿越时刻的随机平移）",
+        f"最大 |偏差| = {maximum_deviation:.2f} × "
+        r"$10^{-4}$ kg kg$^{-1}$" "\n"
+        "最大偏差出现在4 h后过渡阶段\n"
+        "随后衰减；末期体现为阈值时刻平移",
         transform=axes[1].transAxes, va="top", fontsize=8, color="#404040",
     )
     axes[1].legend(loc="lower left", handlelength=1.5)
@@ -794,14 +868,13 @@ def plot_moisture_band(
     )
     inset.set_xticks([zoom_low + 0.3, zoom_high - 0.3])
     inset.set_yticks([0.15])
-    inset.tick_params(labelsize=6.5)
-    inset.set_xticklabels([f"{zoom_low + 0.3:.1f}", f"{zoom_high - 0.3:.1f}"], fontsize=6.5)
-    inset.set_yticklabels(["0.15"], fontsize=6.5)
+    inset.tick_params(labelsize=7.5)
+    inset.set_xticklabels([f"{zoom_low + 0.3:.1f}", f"{zoom_high - 0.3:.1f}"], fontsize=7.5)
+    inset.set_yticklabels(["0.15"], fontsize=7.5)
     inset.text(
         0.02, 0.92, "末期放大", transform=inset.transAxes,
-        fontsize=6.5, color="#606060", va="top",
+        fontsize=7.5, color="#606060", va="top",
     )
-    inset.set_title("", fontsize=0)
 
     for label, axis in zip("ab", axes):
         axis.grid(axis="y", color="#D8D8D8", lw=0.6, alpha=0.65)
@@ -860,7 +933,7 @@ def plot_sigma_sweep(
     ) + 0.03
     axes[0].set_ylim(ylow, yhigh)
     axes[0].set(
-        xlabel="OU创新标准差倍率 σ_mult / σ̂",
+        xlabel=r"OU创新标准差倍率 $\sigma_{\mathrm{mult}}$",
         ylabel="干燥时间 / h",
         title="干燥时间对噪声水平的响应",
     )
@@ -868,7 +941,7 @@ def plot_sigma_sweep(
 
     axes[1].bar(
         sigmas, ranges, width=0.24, color=PALETTE["gray"], alpha=0.45,
-        edgecolor="none", label="极差 (max−min)",
+        edgecolor="none", label=LABEL_RANGE,
     )
     axes[1].bar(
         sigmas, spreads, width=0.24, color=PALETTE["teal"], alpha=0.8,
@@ -883,7 +956,7 @@ def plot_sigma_sweep(
     axes[1].set_xticks([0.5, 1.0, 1.5, 2.0])
     axes[1].set_ylim(0.0, float(np.max(ranges)) * 1.3)
     axes[1].set(
-        xlabel="OU创新标准差倍率 σ_mult / σ̂",
+        xlabel=r"OU创新标准差倍率 $\sigma_{\mathrm{mult}}$",
         ylabel="干燥时间离散度 / min",
         title="路径间随机差异随噪声水平放大",
     )
@@ -896,6 +969,145 @@ def plot_sigma_sweep(
     save_png(fig, figure_dir / "q3_ou_sigma_sweep.png")
 
 
+def write_comparison_tables(
+    result_dir: Path,
+    summary: dict,
+    aligned: dict[str, np.ndarray | float | int],
+) -> None:
+    """Write compact paper-facing tables and source data for every plotted aggregate."""
+    baseline = summary["baseline_constant_mean"]
+    calibration = summary["calibration_difference_sigma0"]
+    model_rows = [
+        {
+            "model": "原模型：3--4 h时间加权均值恒值边界",
+            "sigma_multiplier": 0.0,
+            "path_count": 1,
+            "mean_drying_time_h": baseline["fine_drying_time_h"],
+            "standard_deviation_min": 0.0,
+            "p05_drying_time_h": baseline["fine_drying_time_h"],
+            "p95_drying_time_h": baseline["fine_drying_time_h"],
+            "delta_mean_vs_original_min": 0.0,
+            "delta_mean_vs_original_pct": 0.0,
+            "p05_p95_width_min": 0.0,
+            "range_min": 0.0,
+        },
+    ]
+    if "representative_ou_run" in summary:
+        representative = summary["representative_ou_run"]
+        model_rows.append(
+            {
+                "model": "OU随机边界：默认种子细网格代表路径",
+                "sigma_multiplier": representative["sigma_multiplier"],
+                "path_count": 1,
+                "mean_drying_time_h": representative["drying_time_h"],
+                "standard_deviation_min": np.nan,
+                "p05_drying_time_h": np.nan,
+                "p95_drying_time_h": np.nan,
+                "delta_mean_vs_original_min": representative[
+                    "delta_vs_original_min"
+                ],
+                "delta_mean_vs_original_pct": representative[
+                    "delta_vs_original_pct"
+                ],
+                "p05_p95_width_min": np.nan,
+                "range_min": np.nan,
+            }
+        )
+    model_rows.append(
+        {
+            "model": "OU确定性极限：Huber均衡、无随机创新",
+            "sigma_multiplier": 0.0,
+            "path_count": 1,
+            "mean_drying_time_h": calibration["ou_path_corrected_h"],
+            "standard_deviation_min": 0.0,
+            "p05_drying_time_h": calibration["ou_path_corrected_h"],
+            "p95_drying_time_h": calibration["ou_path_corrected_h"],
+            "delta_mean_vs_original_min": calibration["ou_path_delta_min"],
+            "delta_mean_vs_original_pct": 100.0
+            * (calibration["ou_path_corrected_h"] - baseline["fine_drying_time_h"])
+            / baseline["fine_drying_time_h"],
+            "p05_p95_width_min": 0.0,
+            "range_min": 0.0,
+        }
+    )
+    for row in summary["sigma_sweep"]:
+        model_rows.append(
+            {
+                "model": f"OU随机边界：sigma_multiplier={row['sigma_multiplier']:g}",
+                "sigma_multiplier": row["sigma_multiplier"],
+                "path_count": row["case_count"],
+                "mean_drying_time_h": row["mean_h"],
+                "standard_deviation_min": 60.0 * row["standard_deviation_h"],
+                "p05_drying_time_h": row["p05_h"],
+                "p95_drying_time_h": row["p95_h"],
+                "delta_mean_vs_original_min": row["delta_mean_min"],
+                "delta_mean_vs_original_pct": row["delta_mean_pct"],
+                "p05_p95_width_min": row["spread_p95_p05_min"],
+                "range_min": row["range_min"],
+            }
+        )
+    pd.DataFrame(model_rows).to_csv(
+        result_dir / "original_vs_ou_model_comparison.csv",
+        index=False,
+        encoding="utf-8-sig",
+        float_format="%.8g",
+    )
+
+    parameter_rows = []
+    for key, display_name in (
+        ("temperature", "烘房温度"),
+        ("moisture", "烘房水分浓度"),
+    ):
+        fit = summary["ou_calibration"][key]
+        original_mean = (
+            baseline["temperature_c"] if key == "temperature"
+            else baseline["moisture_kg_kg"]
+        )
+        parameter_rows.append(
+            {
+                "variable": display_name,
+                "unit": fit["unit"],
+                "fit_sample_count": fit["sample_count"],
+                "original_time_weighted_mean": original_mean,
+                "ou_huber_equilibrium": fit["equilibrium_mean"],
+                "equilibrium_minus_original": fit["equilibrium_mean"] - original_mean,
+                "discrete_phi_60s": fit["discrete_phi"],
+                "kappa_per_s": fit["kappa_per_s"],
+                "relaxation_time_s": fit["relaxation_time_s"],
+                "half_life_s": fit["half_life_s"],
+                "innovation_scale": fit["innovation_scale"],
+                "stationary_scale": fit["stationary_scale"],
+                "phi_at_lower_bound": fit["phi_at_lower_bound"],
+            }
+        )
+    pd.DataFrame(parameter_rows).to_csv(
+        result_dir / "ou_calibration_parameters.csv",
+        index=False,
+        encoding="utf-8-sig",
+        float_format="%.10g",
+    )
+
+    source_frame = pd.DataFrame(
+        {
+            "time_s": aligned["time_s"],
+            "time_h": aligned["time_h"],
+            "original_center_moisture_kg_kg": aligned["baseline"],
+            "ou_center_moisture_p05_kg_kg": aligned["p05"],
+            "ou_center_moisture_median_kg_kg": aligned["median"],
+            "ou_center_moisture_p95_kg_kg": aligned["p95"],
+            "ou_minus_original_p05_kg_kg": aligned["deviation_p05"],
+            "ou_minus_original_median_kg_kg": aligned["deviation_median"],
+            "ou_minus_original_p95_kg_kg": aligned["deviation_p95"],
+        }
+    )
+    source_frame.to_csv(
+        result_dir / "ou_moisture_band_source_data.csv",
+        index=False,
+        encoding="utf-8-sig",
+        float_format="%.10g",
+    )
+
+
 def write_analysis_md(
     path: Path,
     summary: dict,
@@ -906,6 +1118,16 @@ def write_analysis_md(
     extra = summary["sigma1_additional"]
     baseline = summary["baseline_constant_mean"]
     ou_cal = summary["ou_calibration"]
+    trajectory = summary["moisture_trajectory_sigma1"]
+    representative = summary.get("representative_ou_run")
+    representative_text = ""
+    if representative is not None:
+        representative_text = (
+            f"\n默认种子（seed={representative['seed']}）的细网格OU代表路径给出"
+            f" {representative['drying_time_h']:.4f} h，较原模型"
+            f" {representative['delta_vs_original_min']:+.2f} min；单条路径只用于"
+            "复现实例，总体判断以蒙特卡洛分布为准。\n"
+        )
     sweep_rows = "\n".join(
         f"| {row['sigma_multiplier']:g} | {row['case_count']} | "
         f"{row['mean_h']:.4f} ± {row['standard_deviation_h']:.4f} | "
@@ -928,6 +1150,12 @@ def write_analysis_md(
 两种做法除4 h后的边界外完全一致：附件3水热耦合方程、药材物性、有限体积
 数值格式均相同，因此两法的干燥时间差全部可归因于边界假设。
 
+参考文献 Che Taib 与 Darus（2025，DOI: 10.11113/matematika.v41.n1.1610）以
+OU过程描述温度偏离，并进一步用Lévy驱动过程刻画随机均值回复速度。本文借鉴其
+“均值回复 + 蒙特卡洛传播”的建模思想；但3--4 h稳定段只有61个逐分钟观测，
+不足以稳健辨识嵌套随机回复速度，故使用可辨识的一阶OU/AR(1)模型。这是针对本题
+数据分辨率的降阶近似，不是对参考文献完整模型的复刻。
+
 ## 2 OU标定结果（3--4 h稳定段，Huber c=1.345）
 
 | 变量 | 均衡 | φ | 创新σ | 平稳σ |
@@ -936,7 +1164,9 @@ def write_analysis_md(
 | 水分 / (kg/kg) | {ou_cal['moisture']['equilibrium_mean']:.6f} | {ou_cal['moisture']['discrete_phi']:.3f} | {ou_cal['moisture']['innovation_scale']:.2e} | {ou_cal['moisture']['stationary_scale']:.2e} |
 
 温度在1 min观测分辨率下已接近白噪声（φ_T = {ou_cal['temperature']['discrete_phi']:.2g}，
-即相关在1 min内衰减完毕），水分有约18 h的弛豫时间。两变量同期创新相关系数
+拟合值触及数值下界）；水分的弛豫时间为
+{ou_cal['moisture']['relaxation_time_s']:.1f} s，亦短于1 min采样间隔。
+因此两者在现有观测分辨率下都只表现出很弱的滞后记忆。两变量同期创新相关系数
 ρ = {ou_cal['robust_innovation_correlation']:+.3f}。
 
 ## 3 蒙特卡洛设计
@@ -952,10 +1182,11 @@ def write_analysis_md(
 
 基准（做法一）干燥时间：细网格 {baseline['fine_drying_time_h']:.4f} h
 （粗网格 {baseline['coarse_drying_time_h']:.4f} h）。
+{representative_text}
 
 **σ=0 确定性极限**：OU无噪声路径比基准 {calibration['ou_path_delta_min']:+.2f} min；
 恒定Huber均衡边界比基准 {calibration['huber_constant_delta_min']:+.2f} min。
-即两种均值口径本身仅造成约 1 min 量级的差别。
+即两种均值口径本身造成的差别不足 0.5 min。
 
 **σ_mult = 1 主蒙特卡洛**（{sigma1['case_count']} 条路径）：
 
@@ -963,8 +1194,8 @@ def write_analysis_md(
   {sigma1['standard_deviation_h'] * 60:.1f} min；
 - 相对做法一基准平均变化 {sigma1['delta_mean_min']:+.2f} min
   （{sigma1['delta_mean_pct']:+.3f}%），5%--95% 分位
-  [{sigma1['p05_h'] - baseline['fine_drying_time_h']:+.1f},
-  {sigma1['p95_h'] - baseline['fine_drying_time_h']:+.1f}] min；
+  [{60 * (sigma1['p05_h'] - baseline['fine_drying_time_h']):+.2f},
+  {60 * (sigma1['p95_h'] - baseline['fine_drying_time_h']):+.2f}] min；
 - |Δ| ≤ 1 min 的比例 {extra['share_within_one_minute'] * 100:.0f}%，
   最大 |Δ| = {extra['maximum_absolute_delta_min']:.1f} min。
 
@@ -979,18 +1210,29 @@ def write_analysis_md(
 1. 两种做法对干燥时间的预测几乎一致：σ_mult = 1 时 60 条OU路径的平均干燥时间
    与恒值基准相差 {sigma1['delta_mean_min']:+.2f} min（{sigma1['delta_mean_pct']:+.3f}%），
    远小于粗-细网格修正本身（约 {abs(baseline['additive_correction_h']) * 60:.0f} min）。
-2. 内部水分轨迹的差异集中在干燥末期阈值穿越阶段，最大中心水分偏差
-   为 10⁻⁴ kg/kg 量级，全程形态一致。
+2. 内部水分轨迹的最大差异出现在4 h后由实测边界转入外推边界的过渡阶段，
+   随后逐步衰减；干燥末期的差异主要体现为阈值穿越时刻的小幅随机平移。在全部
+   {trajectory['path_count']} 条 σ_mult=1 路径共同覆盖的逐分钟区间内，最大中心
+   水分绝对偏差为 {trajectory['maximum_absolute_deviation_kg_kg']:.3e} kg/kg，
+   全程形态与原模型一致。
 3. 随机差异随噪声水平近似线性放大：σ_mult 从 0.5 增至 2.0 时，5%--95%
-   分位宽度由约 {summary['sigma_sweep'][0]['spread_p95_p05_min']:.0f} min 增至约
-   {summary['sigma_sweep'][-1]['spread_p95_p05_min']:.0f} min，但即便 σ_mult = 2
+   分位宽度由 {summary['sigma_sweep'][0]['spread_p95_p05_min']:.2f} min 增至
+   {summary['sigma_sweep'][-1]['spread_p95_p05_min']:.2f} min，但即便 σ_mult = 2
    （标定噪声的两倍），干燥时间相对基准的最大偏移仍不超过
    {summary['sigma_sweep'][-1]['range_min']:.1f} min。
-4. 因此问题3以3--4 h时间加权均值作恒值边界的做法对4 h后的随机环境波动是
-   稳健的：OU随机做法与恒值做法在干燥时间上的差别不足1 min（<0.05%），
-   两种做法可以互相印证。
+4. 因此问题3以3--4 h时间加权均值作恒值边界的做法对4 h后的短时随机波动是
+   稳健的：OU随机做法与恒值做法在干燥时间上的平均差别不足1 min（<0.05%）。
+   但这一结论只覆盖“围绕稳定均值的小幅、短记忆波动”，不能外推到长期漂移、
+   工况突变或参考文献中的随机回复速度机制。
 
-## 6 图清单
+## 6 结果表
+
+- `original_vs_ou_model_comparison.csv`：原模型、OU确定性极限与各噪声倍率的效果对比；
+- `ou_calibration_parameters.csv`：OU参数及其与原恒值边界的均值差；
+- `ou_moisture_band_source_data.csv`：中心水分5%--95%带的逐分钟绘图源数据；
+- `ou_robustness_checkpoint.csv`：全部蒙特卡洛路径的逐路径结果。
+
+## 7 图清单
 
 - `{figure_names['boundary']}`：OU随机边界路径、实测稳定段与两法均值口径；
 - `{figure_names['distribution']}`：σ=1 下干燥时间分布；
@@ -1031,9 +1273,54 @@ def main() -> None:
     summary = build_summary(
         frame, fit, environment, fine_baseline_h, coarse_baseline_h, correction_h
     )
+    representative_path = (
+        repo_root
+        / "results"
+        / "A_problem3_drying_time_huber_ou"
+        / "validation_summary.json"
+    )
+    if representative_path.exists():
+        representative_validation = json.loads(
+            representative_path.read_text(encoding="utf-8")
+        )
+        representative_h = float(
+            representative_validation["drying_time"]["production_h"]
+        )
+        summary["representative_ou_run"] = {
+            "seed": int(
+                representative_validation["model_scope"].get(
+                    "random_seed", DEFAULT_SEED
+                )
+            ),
+            "sigma_multiplier": float(
+                representative_validation["model_scope"].get(
+                    "sigma_multiplier", SIGMA_MAIN
+                )
+            ),
+            "drying_time_h": representative_h,
+            "delta_vs_original_min": 60.0
+            * (representative_h - fine_baseline_h),
+            "delta_vs_original_pct": 100.0
+            * (representative_h - fine_baseline_h)
+            / fine_baseline_h,
+            "role": "reproducible fine-grid example; population inference uses Monte Carlo",
+        }
+    aligned = align_center_trajectories(result_dir / "trajectories_sigma1.npz")
+    summary["moisture_trajectory_sigma1"] = {
+        "path_count": int(aligned["path_count"]),
+        "common_interval_s": [
+            float(np.asarray(aligned["time_s"])[0]),
+            float(np.asarray(aligned["time_s"])[-1]),
+        ],
+        "maximum_absolute_deviation_kg_kg": float(
+            aligned["maximum_absolute_deviation"]
+        ),
+        "alignment": "all paths linearly interpolated to their shared 60 s grid",
+    }
     (result_dir / "robustness_summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    write_comparison_tables(result_dir, summary, aligned)
 
     sample_path = result_dir / "ou_boundary_samples_sigma1.csv"
     write_sample_boundary_csv(
@@ -1045,9 +1332,7 @@ def main() -> None:
     apply_style()
     plot_boundary_paths(figure_dir, environment, fit, sample_path)
     plot_drying_time_distribution(frame, fine_baseline_h, figure_dir, summary)
-    plot_moisture_band(
-        result_dir / "trajectories_sigma1.npz", fine_baseline_h, figure_dir
-    )
+    plot_moisture_band(aligned, fine_baseline_h, figure_dir)
     plot_sigma_sweep(frame, fine_baseline_h, figure_dir, summary)
     write_analysis_md(
         result_dir / "ou_robustness_analysis.md",

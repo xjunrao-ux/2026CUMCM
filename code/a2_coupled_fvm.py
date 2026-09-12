@@ -236,11 +236,21 @@ def simulate_coupled(
     environment: EnvironmentData,
     nominal_radial_step_cm: float,
     time_step_s: float,
+    heat_transfer_coefficient_w_m2_k: float = HEAT_TRANSFER_COEFFICIENT_W_M2_K,
+    mass_transfer_coefficient_m_s: float = MASS_TRANSFER_COEFFICIENT_M_S,
+    conductivity_multiplier: float = 1.0,
+    diffusivity_multiplier: float = 1.0,
     picard_temperature_tolerance_c: float = 1.0e-8,
     picard_moisture_tolerance: float = 1.0e-10,
     maximum_picard_iterations: int = 30,
 ) -> CoupledResult:
     """Solve the two-way property-coupled heat and moisture equations."""
+    if heat_transfer_coefficient_w_m2_k <= 0.0:
+        raise ValueError("The heat-transfer coefficient must be positive.")
+    if mass_transfer_coefficient_m_s <= 0.0:
+        raise ValueError("The mass-transfer coefficient must be positive.")
+    if conductivity_multiplier <= 0.0 or diffusivity_multiplier <= 0.0:
+        raise ValueError("Property multipliers must be positive.")
     steps = int(round(END_TIME_S / time_step_s))
     if not math.isclose(steps * time_step_s, END_TIME_S, abs_tol=1e-12):
         raise ValueError("The time step must divide 10800 s exactly.")
@@ -279,19 +289,21 @@ def simulate_coupled(
         for iteration in range(1, maximum_picard_iterations + 1):
             density = density_kg_m3(moisture_iterate)
             heat_capacity = heat_capacity_j_kg_k(moisture_iterate)
-            conductivity = conductivity_w_m_k(moisture_iterate)
+            conductivity = (
+                conductivity_multiplier * conductivity_w_m_k(moisture_iterate)
+            )
             heat_system = build_diffusion_system(
                 grid,
                 temperature_previous,
                 conductivity,
                 density * heat_capacity,
-                HEAT_TRANSFER_COEFFICIENT_W_M2_K,
+                heat_transfer_coefficient_w_m2_k,
                 oven_temperature,
                 time_step_s,
             )
             temperature_updated = solve_tridiagonal(*heat_system[:4])
 
-            diffusivity = moisture_diffusivity_m2_s(
+            diffusivity = diffusivity_multiplier * moisture_diffusivity_m2_s(
                 moisture_iterate, temperature_updated
             )
             moisture_system = build_diffusion_system(
@@ -299,7 +311,7 @@ def simulate_coupled(
                 moisture_previous,
                 diffusivity,
                 np.ones_like(moisture_iterate),
-                MASS_TRANSFER_COEFFICIENT_M_S,
+                mass_transfer_coefficient_m_s,
                 oven_moisture,
                 time_step_s,
             )
@@ -324,20 +336,22 @@ def simulate_coupled(
         maximum_iterations_used = max(maximum_iterations_used, iteration)
         temperature = temperature_iterate
         moisture = moisture_iterate
-        final_conductivity = conductivity_w_m_k(moisture)
-        final_diffusivity = moisture_diffusivity_m2_s(moisture, temperature)
+        final_conductivity = conductivity_multiplier * conductivity_w_m_k(moisture)
+        final_diffusivity = diffusivity_multiplier * moisture_diffusivity_m2_s(
+            moisture, temperature
+        )
         surface_temperature = reconstruct_surface_value(
             temperature[-1],
             oven_temperature,
             final_conductivity[-1],
-            HEAT_TRANSFER_COEFFICIENT_W_M2_K,
+            heat_transfer_coefficient_w_m2_k,
             surface_distance,
         )
         surface_moisture = reconstruct_surface_value(
             moisture[-1],
             oven_moisture,
             final_diffusivity[-1],
-            MASS_TRANSFER_COEFFICIENT_M_S,
+            mass_transfer_coefficient_m_s,
             surface_distance,
         )
         heat_boundary_conductance = build_diffusion_system(
@@ -345,7 +359,7 @@ def simulate_coupled(
             temperature_previous,
             final_conductivity,
             density_kg_m3(moisture) * heat_capacity_j_kg_k(moisture),
-            HEAT_TRANSFER_COEFFICIENT_W_M2_K,
+            heat_transfer_coefficient_w_m2_k,
             oven_temperature,
             time_step_s,
         )[-1]
@@ -354,7 +368,7 @@ def simulate_coupled(
             moisture_previous,
             final_diffusivity,
             np.ones_like(moisture),
-            MASS_TRANSFER_COEFFICIENT_M_S,
+            mass_transfer_coefficient_m_s,
             oven_moisture,
             time_step_s,
         )[-1]

@@ -1,6 +1,8 @@
 {
   "method": {
     "purpose": "以OU随机过程为依据的问题3模型稳健性分析",
+    "reference": "Che Taib & Darus (2025), doi:10.11113/matematika.v41.n1.1610",
+    "reference_scope": "借鉴均值回复与蒙特卡洛传播思想；因稳定段仅61个逐分钟观测，使用可辨识的一阶OU/AR(1)，不复刻文献中的Lévy驱动随机回复速度。",
     "approach_one": "4 h后温度、水分浓度固定为附件1 3--4 h时间加权均值（恒值做法）",
     "approach_two": "4 h后按3--4 h稳定段Huber稳健标定的精确离散OU/AR(1)过程生成联合随机边界（OU做法）",
     "common_model": "附件3水热耦合有限体积，粗网格0.025 cm，2/60/2 s，统一粗-细修正",
@@ -34,7 +36,7 @@
       "stationary_scale": 0.180682963820189,
       "ordinary_mean": 49.998934426229496,
       "ordinary_standard_deviation": 0.15435336826607313,
-      "ordinary_lag1_correlation": -0.03221061673236021,
+      "ordinary_lag1_correlation": -0.0322106167323602,
       "phi_at_lower_bound": true
     },
     "moisture": {
@@ -53,10 +55,10 @@
       "stationary_scale": 0.0001734960066555755,
       "ordinary_mean": 0.049987540983606554,
       "ordinary_standard_deviation": 0.00015012945233702923,
-      "ordinary_lag1_correlation": 0.03509578950142417,
+      "ordinary_lag1_correlation": 0.035095789501424134,
       "phi_at_lower_bound": false
     },
-    "robust_innovation_correlation": -0.11959465362188985
+    "robust_innovation_correlation": -0.11959465362188981
   },
   "baseline_constant_mean": {
     "temperature_c": 49.99591666666667,
@@ -154,5 +156,22 @@
       "range_min": 1.9333333333325697,
       "share_shorter_than_baseline": 0.625
     }
-  ]
+  ],
+  "representative_ou_run": {
+    "seed": 20260912,
+    "sigma_multiplier": 1.0,
+    "drying_time_h": 57.49611111111111,
+    "delta_vs_original_min": -0.516666666666481,
+    "delta_vs_original_pct": -0.01497461561127292,
+    "role": "reproducible fine-grid example; population inference uses Monte Carlo"
+  },
+  "moisture_trajectory_sigma1": {
+    "path_count": 60,
+    "common_interval_s": [
+      60.0,
+      207000.0
+    ],
+    "maximum_absolute_deviation_kg_kg": 0.0004134535656987737,
+    "alignment": "all paths linearly interpolated to their shared 60 s grid"
+  }
 }
