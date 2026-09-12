@@ -3,8 +3,9 @@
 本程序以 ``a3_drying_time_fvm.py`` 为基准：0--4 h 使用附件1实测烘房
 环境，4 h 后使用3--4 h时间加权均值；药材内部仍采用附录3的导热方程、
 Fick扩散方程和物性关系。唯一的物理升级是在外表面能量平衡中加入水分
-蒸发潜热 ``L_v j_w``。题目给定的传质系数 h_m=8e-7 m/s 保持固定，问题3
-仍采用固定半径，不计收缩，也不再叠加体积潜热源，以免重复计算蒸发耗热。
+蒸发潜热 ``L_v j_w``。题目给定的传质系数 h_m=8e-7 m/s 保持固定。问题3
+半径和长度不变，且干物质质量守恒，因此 rho_d=m_d/V 固定为初态值；模型
+不计收缩，也不再叠加体积潜热源，以免重复计算蒸发耗热。
 
 默认输出到 ``results/A_problem3_drying_time_steam``：
   * table5_moisture.csv：题目表5；
@@ -36,7 +37,7 @@ import a3_drying_time_fvm as base
 LATENT_HEAT_INTERCEPT_KJ_KG = 2500.8
 LATENT_HEAT_SLOPE_KJ_KG_K = 2.36
 
-# C为干基含水率，rho(C)=rho_d(1+C)。以题给初态求固定干物质体积密度。
+# 问题3体积固定且干物质质量不变，因此干基体积密度全程保持初态值。
 DRY_BULK_DENSITY_KG_M3 = (
     650.0 + 128.0 * q2.INITIAL_MOISTURE_KG_KG
 ) / (1.0 + q2.INITIAL_MOISTURE_KG_KG)
@@ -50,6 +51,7 @@ class SteamStepResult:
     surface_moisture_kg_kg: float
     heat_boundary_conductance: float
     moisture_boundary_conductance: float
+    surface_dry_bulk_density_kg_m3: float
     water_mass_flux_kg_m2_s: float
     latent_heat_j_kg: float
     latent_heat_flux_w_m2: float
@@ -84,6 +86,7 @@ class SteamDryingResult:
     oven_moisture_kg_kg: np.ndarray
     surface_temperature_c: np.ndarray
     surface_moisture_kg_kg: np.ndarray
+    surface_dry_bulk_density_kg_m3: np.ndarray
     water_mass_flux_kg_m2_s: np.ndarray
     latent_heat_j_kg: np.ndarray
     latent_heat_flux_w_m2: np.ndarray
@@ -95,6 +98,7 @@ class SteamDryingResult:
     integrated_convective_heat_j_m: float
     integrated_conductive_heat_j_m: float
     integrated_latent_heat_j_m: float
+    integrated_physical_water_outflow_kg_m: float
     accumulated_sensible_energy_change_j_m: float
     maximum_storage_balance_residual_j_m: float
     maximum_surface_energy_residual_w_m2: float
@@ -176,9 +180,11 @@ def advance_coupled_step(
             surface_distance,
         )
 
+        # 问题3中m_d和V均不变，故rho_d=m_d/V固定为初态值。
+        surface_dry_bulk_density = DRY_BULK_DENSITY_KG_M3
         # j_w=rho_d*h_m*(C_s-C_inf)，正值表示水分由药材流向烘房。
         water_mass_flux = (
-            DRY_BULK_DENSITY_KG_M3
+            surface_dry_bulk_density
             * mass_transfer
             * (surface_moisture - oven_moisture_kg_kg)
         )
@@ -277,6 +283,7 @@ def advance_coupled_step(
         surface_moisture_kg_kg=float(surface_moisture),
         heat_boundary_conductance=float(heat_boundary_conductance),
         moisture_boundary_conductance=float(moisture_system[4]),
+        surface_dry_bulk_density_kg_m3=float(surface_dry_bulk_density),
         water_mass_flux_kg_m2_s=float(water_mass_flux),
         latent_heat_j_kg=float(latent_heat),
         latent_heat_flux_w_m2=float(latent_heat_flux),
@@ -316,6 +323,7 @@ def simulate_until_dry(
     oven_moisture_records: list[float] = []
     surface_temperature_records: list[float] = []
     surface_moisture_records: list[float] = []
+    surface_dry_bulk_density_records: list[float] = []
     water_mass_flux_records: list[float] = []
     latent_heat_records: list[float] = []
     latent_heat_flux_records: list[float] = []
@@ -327,6 +335,7 @@ def simulate_until_dry(
     integrated_convective_heat = 0.0
     integrated_conductive_heat = 0.0
     integrated_latent_heat = 0.0
+    integrated_physical_water_outflow = 0.0
     accumulated_sensible_energy_change = 0.0
     maximum_storage_balance_residual = 0.0
     maximum_surface_energy_residual = 0.0
@@ -392,6 +401,11 @@ def simulate_until_dry(
             * surface_area_per_length
             * step.latent_heat_flux_w_m2
         )
+        integrated_physical_water_outflow += (
+            time_step_s
+            * surface_area_per_length
+            * step.water_mass_flux_kg_m2_s
+        )
         accumulated_sensible_energy_change += step.sensible_energy_change_j_m
         maximum_storage_balance_residual = max(
             maximum_storage_balance_residual,
@@ -453,6 +467,9 @@ def simulate_until_dry(
                 oven_moisture_records.append(oven_moisture)
                 surface_temperature_records.append(surface_temperature)
                 surface_moisture_records.append(surface_moisture)
+                surface_dry_bulk_density_records.append(
+                    step.surface_dry_bulk_density_kg_m3
+                )
                 water_mass_flux_records.append(step.water_mass_flux_kg_m2_s)
                 latent_heat_records.append(step.latent_heat_j_kg)
                 latent_heat_flux_records.append(step.latent_heat_flux_w_m2)
@@ -494,6 +511,9 @@ def simulate_until_dry(
         oven_moisture_kg_kg=np.asarray(oven_moisture_records),
         surface_temperature_c=np.asarray(surface_temperature_records),
         surface_moisture_kg_kg=np.asarray(surface_moisture_records),
+        surface_dry_bulk_density_kg_m3=np.asarray(
+            surface_dry_bulk_density_records
+        ),
         water_mass_flux_kg_m2_s=np.asarray(water_mass_flux_records),
         latent_heat_j_kg=np.asarray(latent_heat_records),
         latent_heat_flux_w_m2=np.asarray(latent_heat_flux_records),
@@ -505,6 +525,9 @@ def simulate_until_dry(
         integrated_convective_heat_j_m=integrated_convective_heat,
         integrated_conductive_heat_j_m=integrated_conductive_heat,
         integrated_latent_heat_j_m=integrated_latent_heat,
+        integrated_physical_water_outflow_kg_m=(
+            integrated_physical_water_outflow
+        ),
         accumulated_sensible_energy_change_j_m=(
             accumulated_sensible_energy_change
         ),
@@ -549,6 +572,7 @@ def write_surface_energy_csv(path: Path, result: SteamDryingResult) -> None:
         "oven_moisture_kg_kg",
         "surface_temperature_C",
         "surface_moisture_kg_kg",
+        "surface_dry_bulk_density_kg_m3",
         "water_mass_flux_kg_m2_s",
         "latent_heat_J_kg",
         "latent_heat_flux_W_m2",
@@ -562,6 +586,7 @@ def write_surface_energy_csv(path: Path, result: SteamDryingResult) -> None:
         result.oven_moisture_kg_kg,
         result.surface_temperature_c,
         result.surface_moisture_kg_kg,
+        result.surface_dry_bulk_density_kg_m3,
         result.water_mass_flux_kg_m2_s,
         result.latent_heat_j_kg,
         result.latent_heat_flux_w_m2,
@@ -613,6 +638,10 @@ def build_validation(
             "surface_energy_balance": (
                 "h_T(T_inf-T_s)=k*dT/dr|R+L_v*j_w"
             ),
+            "surface_dry_bulk_density": (
+                "constant rho_d=m_d/V because both dry mass and the fixed "
+                "question-3 cylinder volume are conserved"
+            ),
         }
     )
     validation["fixed_parameters"] = {
@@ -621,29 +650,41 @@ def build_validation(
         ),
         "mass_transfer_coefficient_m_s": q2.MASS_TRANSFER_COEFFICIENT_M_S,
         "dry_bulk_density_kg_m3": DRY_BULK_DENSITY_KG_M3,
-        "dry_bulk_density_derivation": "rho(C0)/(1+C0), C0=2.55 kg/kg",
+        "dry_bulk_density_derivation": (
+            "rho_d=rho(C0)/(1+C0), C0=2.55 kg/kg; fixed in question 3"
+        ),
         "latent_heat_correlation": "L_v=[2500.8-2.36*T_s(C)]*1000 J/kg",
     }
 
-    physical_stored_change = (
+    physical_stored_water_change = float(
         DRY_BULK_DENSITY_KG_M3
-        * validation["moisture_balance_per_unit_length"][
-            "stored_change_integral"
-        ]
+        * np.sum(
+            production.grid.volumes_m3_m
+            * (
+                production.final_internal_moisture_kg_kg
+                - q2.INITIAL_MOISTURE_KG_KG
+            )
+        )
     )
-    physical_outflow = (
-        DRY_BULK_DENSITY_KG_M3
-        * production.integrated_moisture_outflow
+    physical_surface_outflow = production.integrated_physical_water_outflow_kg_m
+    physical_water_residual = (
+        physical_stored_water_change + physical_surface_outflow
     )
-    physical_residual = physical_stored_change + physical_outflow
-    physical_scale = max(
-        abs(physical_stored_change), abs(physical_outflow), 1.0e-30
+    physical_water_scale = max(
+        abs(physical_stored_water_change),
+        abs(physical_surface_outflow),
+        1.0e-30,
     )
     validation["water_mass_balance_per_unit_length"] = {
-        "stored_water_change_kg_m": physical_stored_change,
-        "integrated_surface_outflow_kg_m": physical_outflow,
-        "residual_kg_m": physical_residual,
-        "relative_residual": abs(physical_residual) / physical_scale,
+        "constant_dry_bulk_density_kg_m3": DRY_BULK_DENSITY_KG_M3,
+        "stored_water_change_kg_m": physical_stored_water_change,
+        "integrated_surface_outflow_kg_m": physical_surface_outflow,
+        "residual_kg_m": physical_water_residual,
+        "relative_residual": abs(physical_water_residual) / physical_water_scale,
+        "dry_mass_interpretation": (
+            "Question 3 fixes cylinder volume; constant dry mass therefore "
+            "implies constant dry-bulk density."
+        ),
     }
 
     integrated_surface_residual = (
@@ -711,6 +752,7 @@ def build_validation(
         "maximum_latent_heat_flux_W_m2": float(
             np.max(production.latent_heat_flux_w_m2)
         ),
+        "surface_dry_bulk_density_kg_m3": DRY_BULK_DENSITY_KG_M3,
     }
 
     reference_time = _reference_constant_mean_drying_time(repo_root)
@@ -751,7 +793,10 @@ def _find_node_runtime() -> tuple[str, str | None]:
 
 
 def build_result3_workbook(
-    script_path: Path, repo_root: Path, result_dir: Path
+    script_path: Path,
+    repo_root: Path,
+    result_dir: Path,
+    output_filename: str = "result3_steam.xlsx",
 ) -> Path:
     builder = script_path.with_name("build_result3_steam_from_csv.cjs")
     template = (
@@ -764,8 +809,8 @@ def build_result3_workbook(
         / "result3.xlsx"
     )
     source_csv = result_dir / "moisture_full_60s_0p1cm.csv"
-    output = result_dir / "result3_steam.xlsx"
-    preview_dir = repo_root / "tmp" / "A_problem3_steam_verify"
+    output = result_dir / output_filename
+    preview_dir = repo_root / "tmp" / "A_problem3_steam_fixed_rho_verify"
     if not builder.exists() or not template.exists():
         raise FileNotFoundError("Cannot find the result3 builder or template workbook.")
     node, module_path = _find_node_runtime()
@@ -775,21 +820,28 @@ def build_result3_workbook(
         environment["NODE_PATH"] = (
             module_path if not current else module_path + os.pathsep + current
         )
-    completed = subprocess.run(
-        [
-            node,
-            str(builder),
-            str(template),
-            str(source_csv),
-            str(output),
-            str(preview_dir),
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        env=environment,
-    )
+    try:
+        completed = subprocess.run(
+            [
+                node,
+                str(builder),
+                str(template),
+                str(source_csv),
+                str(output),
+                str(preview_dir),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=environment,
+        )
+    except subprocess.CalledProcessError as error:
+        if error.stdout:
+            print(error.stdout, flush=True)
+        if error.stderr:
+            print(error.stderr, flush=True)
+        raise
     if completed.stdout.strip():
         print(completed.stdout.strip(), flush=True)
     return output
@@ -865,7 +917,7 @@ def main() -> None:
     )
     print(
         f"Fixed h_m: {q2.MASS_TRANSFER_COEFFICIENT_M_S:.3e} m/s; "
-        f"rho_d: {DRY_BULK_DENSITY_KG_M3:.9f} kg/m3"
+        f"fixed rho_d={DRY_BULK_DENSITY_KG_M3:.9f} kg/m3"
     )
     print(
         f"Drying time: {production.drying_time_s:.0f} s "

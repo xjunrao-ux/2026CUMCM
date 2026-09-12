@@ -23,7 +23,8 @@
       2.0
     ],
     "saved_interval_s": 60.0,
-    "surface_energy_balance": "h_T(T_inf-T_s)=k*dT/dr|R+L_v*j_w"
+    "surface_energy_balance": "h_T(T_inf-T_s)=k*dT/dr|R+L_v*j_w",
+    "surface_dry_bulk_density": "constant rho_d=m_d/V because both dry mass and the fixed question-3 cylinder volume are conserved"
   },
   "constant_boundary": {
     "temperature_C": 49.99591666666667,
@@ -81,14 +82,16 @@
     "heat_transfer_coefficient_W_m2_K": 25.0,
     "mass_transfer_coefficient_m_s": 8e-07,
     "dry_bulk_density_kg_m3": 275.0422535211268,
-    "dry_bulk_density_derivation": "rho(C0)/(1+C0), C0=2.55 kg/kg",
+    "dry_bulk_density_derivation": "rho_d=rho(C0)/(1+C0), C0=2.55 kg/kg; fixed in question 3",
     "latent_heat_correlation": "L_v=[2500.8-2.36*T_s(C)]*1000 J/kg"
   },
   "water_mass_balance_per_unit_length": {
+    "constant_dry_bulk_density_kg_m3": 275.0422535211268,
     "stored_water_change_kg_m": -0.838387926030638,
-    "integrated_surface_outflow_kg_m": 0.8383879260305557,
-    "residual_kg_m": -8.237854842718662e-14,
-    "relative_residual": 9.825827146296018e-14
+    "integrated_surface_outflow_kg_m": 0.8383879260305442,
+    "residual_kg_m": -9.381384558082573e-14,
+    "relative_residual": 1.118978967469021e-13,
+    "dry_mass_interpretation": "Question 3 fixes cylinder volume; constant dry mass therefore implies constant dry-bulk density."
   },
   "energy_balance_per_unit_length": {
     "integrated_convective_input_J_m": 2083364.473123383,
@@ -108,7 +111,8 @@
     "minimum_saved_surface_temperature_C": 10.227997412139771,
     "maximum_saved_surface_temperature_C": 49.940031661378235,
     "minimum_latent_heat_flux_W_m2": 1.391297077431029,
-    "maximum_latent_heat_flux_W_m2": 1227.8333797013565
+    "maximum_latent_heat_flux_W_m2": 1227.8333797013565,
+    "surface_dry_bulk_density_kg_m3": 275.0422535211268
   },
   "comparison_with_original_no_latent_heat_model": {
     "reference_drying_time_s": 207017.0,
