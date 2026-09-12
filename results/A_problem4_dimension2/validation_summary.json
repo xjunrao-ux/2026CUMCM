@@ -19,14 +19,14 @@
       "nz": 40,
       "nominal_initial_dr_m": 0.0003125,
       "nominal_dz_m": 0.003125,
-      "elapsed_s": 1190.4239550999991
+      "elapsed_s": 973.3456489999953
     },
     "coarse": {
       "nr": 32,
       "nz": 20,
       "nominal_initial_dr_m": 0.000625,
       "nominal_dz_m": 0.00625,
-      "elapsed_s": 253.6485898000028
+      "elapsed_s": 224.99579990000348
     },
     "time_steps_s": [
       1.0,
