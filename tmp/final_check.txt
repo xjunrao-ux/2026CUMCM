@@ -1,0 +1,14 @@
+=== results/submission/result1.xlsx ===
+  温度: 1800 data rows x 22 cols | freeze=B2 | A2 fmt=0, B2 fmt=0.0000 | last row t=1800, B col last=33.5756
+  水分浓度: 1800 data rows x 22 cols | freeze=B2 | A2 fmt=0, B2 fmt=0.0000 | last row t=1800, B col last=2.55
+=== results/submission/result2.xlsx ===
+  温度: 10800 data rows x 22 cols | freeze=B2 | A2 fmt=0, B2 fmt=0.0000 | last row t=10800, B col last=49.8495
+  水分浓度: 10800 data rows x 22 cols | freeze=B2 | A2 fmt=0, B2 fmt=0.0000 | last row t=10800, B col last=1.7662
+=== results/submission/result3.xlsx ===
+  Sheet1: 3451 data rows x 22 cols | freeze=B2 | A2 fmt=0, B2 fmt=0.0000 | last row t=207017, B col last=0.15
+=== results/submission/result4.xlsx ===
+  Sheet1: 3068 data rows x 23 cols | freeze=B2 | A2 fmt=0, B2 fmt=0.0000 | last row t=184022, B col last=0.15
+result2 温度 t=10800 row: [10800, 49.8495, 49.8532, 49.9664]
+result2 水分浓度 t=10800 row: [10800, 1.7662, 1.7344, 1.0081]
+result3 last row: [207017, 0.15, 0.1477, 0.1402, 0.0526]
+result3 row2: [60, 2.55, 2.3275]

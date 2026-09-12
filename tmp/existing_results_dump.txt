@@ -1,0 +1,43 @@
+=== results/A_problem4_shrinkage/result4.xlsx ===
+  sheet='Sheet1' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+
+=== results/A_problem4_shrinkage_huber_ou/result4.xlsx ===
+  sheet='Sheet1' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+
+=== results/A_problem3_drying_time/result3.xlsx ===
+  sheet='Sheet1' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+
+=== results/A_problem3_drying_time_huber_ou/result3.xlsx ===
+  sheet='Sheet1' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+
+=== results/A_problem1_coupled/result1.xlsx ===
+  sheet='温度' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+  sheet='水分浓度' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+
+=== results/A_problem2_coupled/result2.xlsx ===
+  sheet='温度' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
+  sheet='水分浓度' max_row=0 max_col=0
+  row1: []
+  row2: []
+  lastrow: []
