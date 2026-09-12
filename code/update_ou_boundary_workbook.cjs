@@ -167,7 +167,7 @@ async function main() {
     runIndex,
     runId,
     runUtc,
-    parameters.random_seed,
+    String(parameters.random_seed),
     parameters.sigma_multiplier,
     parameters.temperature.equilibrium_mean,
     parameters.moisture.equilibrium_mean,
@@ -199,7 +199,7 @@ async function main() {
   const appendedHistory = boundaryRows.map((row) => [
     runIndex,
     runId,
-    parameters.random_seed,
+    String(parameters.random_seed),
     row[0],
     row[1],
     row[2],
@@ -217,7 +217,7 @@ async function main() {
   summarySheet.getRange(`A2:A${summaryRows.length + 1}`).format.numberFormat = "0";
   summarySheet.getRange(`C2:C${summaryRows.length + 1}`).format.numberFormat =
     "yyyy-mm-dd hh:mm:ss";
-  summarySheet.getRange(`D2:D${summaryRows.length + 1}`).format.numberFormat = "0";
+  summarySheet.getRange(`D2:D${summaryRows.length + 1}`).format.numberFormat = "@";
   summarySheet.getRange(`E2:E${summaryRows.length + 1}`).format.numberFormat = "0.00";
   summarySheet.getRange(`F2:F${summaryRows.length + 1}`).format.numberFormat = "0.000000";
   summarySheet.getRange(`G2:G${summaryRows.length + 1}`).format.numberFormat = "0.0000000000";
@@ -316,7 +316,8 @@ async function main() {
   styleHeader(historySheet.getRange("A1:G1"));
   styleBody(historySheet.getRange(`A2:G${historyRows.length + 1}`));
   historySheet.getRange(`A2:A${historyRows.length + 1}`).format.numberFormat = "0";
-  historySheet.getRange(`C2:D${historyRows.length + 1}`).format.numberFormat = "0";
+  historySheet.getRange(`C2:C${historyRows.length + 1}`).format.numberFormat = "@";
+  historySheet.getRange(`D2:D${historyRows.length + 1}`).format.numberFormat = "0";
   historySheet.getRange(`E2:E${historyRows.length + 1}`).format.numberFormat = "0.000000";
   historySheet.getRange(`F2:F${historyRows.length + 1}`).format.numberFormat = "0.000000";
   historySheet.getRange(`G2:G${historyRows.length + 1}`).format.numberFormat = "0.0000000000";

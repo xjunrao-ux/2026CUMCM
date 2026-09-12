@@ -699,7 +699,7 @@ def main() -> None:
     )
     result_dir.mkdir(parents=True, exist_ok=True)
 
-    actual_seed = secrets.randbits(63) if args.randomize_seed else args.seed
+    actual_seed = secrets.randbits(32) if args.randomize_seed else args.seed
     environment = q2.load_and_preprocess_environment(data_path)
     boundary = build_huber_ou_boundary(
         environment,
