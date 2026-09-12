@@ -244,10 +244,11 @@ def choose_time_step(
     early_time_step_s: float,
     late_time_step_s: float,
     final_time_step_s: float,
+    refinement_margin: float = 0.002,
 ) -> tuple[float, str]:
     if time_s < MEASURED_END_TIME_S:
         return early_time_step_s, "measured_environment"
-    if maximum_moisture < DRYING_THRESHOLD_KG_KG + 0.002:
+    if maximum_moisture < DRYING_THRESHOLD_KG_KG + refinement_margin:
         return final_time_step_s, "threshold_refinement"
     return late_time_step_s, "constant_environment"
 
@@ -258,6 +259,7 @@ def simulate_until_dry(
     early_time_step_s: float,
     late_time_step_s: float,
     final_time_step_s: float,
+    refinement_margin: float = 0.002,
 ) -> LongDryingResult:
     """Run the full coupled model until all radial positions are dry."""
     grid = q2.make_grid(nominal_radial_step_cm)
@@ -294,6 +296,7 @@ def simulate_until_dry(
             early_time_step_s,
             late_time_step_s,
             final_time_step_s,
+            refinement_margin,
         )
         time_step_s = proposed_step
         if time_s < MEASURED_END_TIME_S < time_s + time_step_s:

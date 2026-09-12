@@ -1,0 +1,57 @@
+{
+  "model_scope": {
+    "time_interval_s": [
+      0,
+      10800
+    ],
+    "geometry": "fixed-radius one-dimensional axisymmetric cylinder",
+    "latent_heat": "excluded as requested",
+    "shrinkage": "excluded in question 2",
+    "constitutive_laws": "Appendix 3 used from t=0 over the whole process",
+    "environment": "Attachment 1 piecewise-linear interpolation at each step",
+    "production_nominal_radial_step_cm": 0.0125,
+    "production_time_step_s": 0.5,
+    "coarse_nominal_radial_step_cm": 0.025,
+    "coarse_time_step_s": 1.0
+  },
+  "grid_refinement": {
+    "temperature_full_max_change_C": 0.0010641117091978458,
+    "temperature_full_mean_change_C": 0.0003269250076405832,
+    "moisture_full_max_change_kg_kg": 0.0014312003098950754,
+    "moisture_full_mean_change_kg_kg": 4.5035879095185764e-05,
+    "table3_max_change_C": 0.0008370183957708832,
+    "table4_max_change_kg_kg": 0.00013636381071702175
+  },
+  "moisture_balance_per_unit_length": {
+    "stored_change_integral": -0.0014670653566112172,
+    "integrated_boundary_outflow": 0.0014670653566117974,
+    "residual": 5.80265002714242e-16,
+    "relative_residual": 3.9552771122233435e-13
+  },
+  "physical_ranges": {
+    "temperature_min_C": 27.999999999999957,
+    "temperature_max_C": 49.96639733482024,
+    "moisture_min_kg_kg": 1.0081249785483135,
+    "moisture_max_kg_kg": 2.550000000000006,
+    "diffusivity_min_m2_s": 5.547534505277057e-09,
+    "diffusivity_max_m2_s": 1.2521753257448127e-08,
+    "thermal_diffusivity_min_m2_s": 1.4482817057045407e-07,
+    "thermal_diffusivity_max_m2_s": 1.8219597268107127e-07
+  },
+  "checks": {
+    "radial_temperature_order_violation_count": 0,
+    "minimum_outward_temperature_increment_C": -0.003997481476510245,
+    "radial_moisture_order_violation_count": 0,
+    "time_moisture_monotonicity_violation_count": 0,
+    "maximum_picard_iterations": 4
+  },
+  "selected_3h_outputs": {
+    "oven_temperature_C": 50.195,
+    "oven_moisture_kg_kg": 0.04977,
+    "center_temperature_C": 49.849455425019734,
+    "surface_temperature_C": 49.96639733482024,
+    "center_moisture_kg_kg": 1.7662096015716318,
+    "surface_moisture_kg_kg": 1.0081249785483135,
+    "volume_average_moisture_kg_kg": 1.382546483282253
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "method": "Huber Proposal-2 equilibrium and scale; bounded Huber IRLS for the exact-discrete OU/AR(1) coefficient",
+  "fit_interval_s": [
+    10800.0,
+    14400.0
+  ],
+  "path_interval_s": 60.0,
+  "path_end_time_s": 259200.0,
+  "random_seed": 20260912,
+  "sigma_multiplier": 1.0,
+  "temperature": {
+    "variable": "oven_temperature",
+    "unit": "degC",
+    "sample_count": 61,
+    "transition_count": 60,
+    "sampling_interval_s": 60.0,
+    "huber_c": 1.345,
+    "equilibrium_mean": 49.998934426229496,
+    "discrete_phi": 1e-06,
+    "kappa_per_s": 0.23025850929940456,
+    "relaxation_time_s": 4.342944819032518,
+    "half_life_s": 3.010299956639812,
+    "innovation_scale": 0.18068296382009866,
+    "stationary_scale": 0.180682963820189,
+    "ordinary_mean": 49.998934426229496,
+    "ordinary_standard_deviation": 0.15435336826607313,
+    "ordinary_lag1_correlation": -0.03221061673236021,
+    "phi_at_lower_bound": true
+  },
+  "moisture": {
+    "variable": "oven_moisture_concentration",
+    "unit": "kg/kg",
+    "sample_count": 61,
+    "transition_count": 60,
+    "sampling_interval_s": 60.0,
+    "huber_c": 1.345,
+    "equilibrium_mean": 0.0499870026501955,
+    "discrete_phi": 0.03738801450969816,
+    "kappa_per_s": 0.05477341822629187,
+    "relaxation_time_s": 18.25703109980433,
+    "half_life_s": 12.654809632224609,
+    "innovation_scale": 0.00017337470237030025,
+    "stationary_scale": 0.0001734960066555755,
+    "ordinary_mean": 0.049987540983606554,
+    "ordinary_standard_deviation": 0.00015012945233702923,
+    "ordinary_lag1_correlation": 0.03509578950142417,
+    "phi_at_lower_bound": false
+  },
+  "robust_innovation_correlation": -0.11959465362188985
+}
