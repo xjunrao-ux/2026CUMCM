@@ -1,0 +1,46 @@
+{
+  "model": {
+    "geometry": "one-dimensional axisymmetric cylinder",
+    "radial_method": "node-centred finite volume",
+    "time_method": "backward Euler",
+    "output_radial_interval_cm": 0.1,
+    "output_time_interval_s": 1.0,
+    "production_radial_step_cm": 0.025,
+    "production_time_step_s": 0.25,
+    "reference_radial_step_cm": 0.0125,
+    "reference_time_step_s": 0.125
+  },
+  "dimensionless_numbers": {
+    "thermal_diffusivity_m2_s": 1.6885553470919323e-07,
+    "Biot_number": 1.3888888888888888,
+    "Fourier_number_at_1800_s": 0.7598499061913695
+  },
+  "grid_refinement": {
+    "baseline_vs_reference_max_abs_C": 0.0019210414316930269,
+    "baseline_vs_reference_mean_abs_C": 0.0008858949447235277,
+    "medium_vs_reference_max_abs_C": 0.0007763595361716114,
+    "medium_vs_reference_mean_abs_C": 0.00037701963567877376,
+    "production_vs_reference_max_abs_C": 0.00025086716500766215,
+    "production_vs_reference_mean_abs_C": 0.00012872236627541967
+  },
+  "energy_balance_per_unit_length": {
+    "stored_energy_change_J_m": 19204.88518779703,
+    "integrated_convective_input_J_m": 19204.885187784104,
+    "residual_J_m": 1.2925738701596856e-08,
+    "relative_residual": 6.730443100914082e-13
+  },
+  "physical_checks": {
+    "minimum_predicted_temperature_C": 27.99999999999997,
+    "maximum_predicted_temperature_C": 36.785720362695955,
+    "maximum_oven_temperature_0_1800_s_C": 41.513,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "temperature_above_oven_violation_count": 0
+  },
+  "selected_outputs": {
+    "center_temperature_1800_s_C": 33.57563542478613,
+    "surface_temperature_1800_s_C": 36.785720362695955,
+    "center_surface_gap_1800_s_C": 3.2100849379098264,
+    "oven_temperature_1800_s_C": 41.513
+  }
+}

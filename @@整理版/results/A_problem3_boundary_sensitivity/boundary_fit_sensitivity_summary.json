@@ -1,0 +1,248 @@
+{
+  "data_integrity": {
+    "record_count": 241,
+    "sampling_interval_s": 60.0,
+    "cleaned_copy_path": "C:\\Users\\user\\Documents\\GitHub\\2026CUMCM\\数据清洗\\附件1_清洗后.xlsx",
+    "cleaned_and_original_numeric_values_identical": true,
+    "smoothing_used": false
+  },
+  "baseline_time_weighted_3_4h": {
+    "temperature_c": 49.99591666666667,
+    "moisture_kg_kg": 0.04999041666666666,
+    "switch_time_s": 14400.0
+  },
+  "tail_30min_arithmetic_mean": {
+    "temperature_c": 50.01325806451613,
+    "moisture_kg_kg": 0.04998870967741936
+  },
+  "plateau_diagnostics_3_4h": {
+    "temperature_slope_c_per_h": 0.0028239026969833626,
+    "moisture_slope_kg_kg_per_h": -1.2882072977253395e-05
+  },
+  "robust_asymptotic_fit": {
+    "model": "y(t)=y_inf+A*exp(-(t-t0)/tau), A<=0; soft-L1 robust loss",
+    "selection": "fit through 3 h; choose t0 by minimum 3--4 h holdout RMSE; refit through 4 h",
+    "bootstrap": {
+      "method": "moving-block residual bootstrap",
+      "replications": 500,
+      "block_length_records": 5
+    },
+    "temperature": {
+      "selected_start_h": 1.0,
+      "plateau": 50.01928769476832,
+      "amplitude": -2.600256304920733,
+      "time_constant_h": 0.40839461998015736,
+      "fit_rmse": 0.14401207388896708,
+      "holdout_rmse": 0.15859341385022635,
+      "bootstrap_standard_error": 0.017961593975400196,
+      "bootstrap_ci95_lower": 49.98082052915262,
+      "bootstrap_ci95_upper": 50.053807126574085,
+      "holdout_candidates": [
+        {
+          "start_h": 0.5,
+          "training_rmse": 0.1371046612103893,
+          "holdout_rmse": 0.15993591472193328,
+          "training_plateau": 50.053063210279234
+        },
+        {
+          "start_h": 1.0,
+          "training_rmse": 0.1385735230271009,
+          "holdout_rmse": 0.15859341385022635,
+          "training_plateau": 50.04859229034442
+        },
+        {
+          "start_h": 1.5,
+          "training_rmse": 0.14483061692164417,
+          "holdout_rmse": 0.16190461639365153,
+          "training_plateau": 50.06333822951413
+        },
+        {
+          "start_h": 2.0,
+          "training_rmse": 0.14528074922720743,
+          "holdout_rmse": 0.20640240400045132,
+          "training_plateau": 50.21772111394662
+        }
+      ]
+    },
+    "moisture": {
+      "selected_start_h": 2.0,
+      "plateau": 0.0500143682903951,
+      "amplitude": -0.001082699326341973,
+      "time_constant_h": 0.2691091787151588,
+      "fit_rmse": 0.00015486276439380611,
+      "holdout_rmse": 0.00019251495940854644,
+      "bootstrap_standard_error": 2.8603867749446785e-05,
+      "bootstrap_ci95_lower": 0.049966396568973614,
+      "bootstrap_ci95_upper": 0.05007568322272401,
+      "holdout_candidates": [
+        {
+          "start_h": 0.5,
+          "training_rmse": 0.00017665455350080874,
+          "holdout_rmse": 0.00035135764924011084,
+          "training_plateau": 0.050410602144793225
+        },
+        {
+          "start_h": 1.0,
+          "training_rmse": 0.0001449399468650783,
+          "holdout_rmse": 0.00022530569700874027,
+          "training_plateau": 0.05022189729529552
+        },
+        {
+          "start_h": 1.5,
+          "training_rmse": 0.0001563462583974149,
+          "holdout_rmse": 0.0002517103918091312,
+          "training_plateau": 0.050270007382657966
+        },
+        {
+          "start_h": 2.0,
+          "training_rmse": 0.00015680503430023544,
+          "holdout_rmse": 0.00019251495940854644,
+          "training_plateau": 0.05013625191340115
+        }
+      ]
+    }
+  },
+  "screening_grid": {
+    "nominal_radial_step_cm": 0.025,
+    "time_steps_s": [
+      2.0,
+      60.0,
+      2.0
+    ],
+    "cases": [
+      {
+        "case": "baseline_mean_3_4h",
+        "description": "原模型：3--4 h时间加权均值，4 h后切换恒值边界",
+        "temperature_c": 49.99591666666667,
+        "moisture_kg_kg": 0.04999041666666666,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 207120.0,
+        "drying_time_h": 57.53333333333333,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": 0.0
+      },
+      {
+        "case": "robust_asymptote",
+        "description": "留出检验选窗的Huber鲁棒一阶渐近拟合，4 h后切换",
+        "temperature_c": 50.01928769476832,
+        "moisture_kg_kg": 0.0500143682903951,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 206968.0,
+        "drying_time_h": 57.49111111111111,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": -2.533333333333333
+      },
+      {
+        "case": "tail30_mean_switch_100min",
+        "description": "补充清洗记录口径：末30 min均值，100 min后切换恒值边界",
+        "temperature_c": 50.01325806451613,
+        "moisture_kg_kg": 0.04998870967741936,
+        "switch_time_s": 6000.0,
+        "drying_time_s": 207000.0,
+        "drying_time_h": 57.5,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": -2.0
+      },
+      {
+        "case": "switch_100min_only",
+        "description": "仅提前恒值边界切换时刻，恒值仍取原模型均值",
+        "temperature_c": 49.99591666666667,
+        "moisture_kg_kg": 0.04999041666666666,
+        "switch_time_s": 6000.0,
+        "drying_time_s": 207116.0,
+        "drying_time_h": 57.532222222222224,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": -0.06666666666666667
+      },
+      {
+        "case": "temperature_minus",
+        "description": "",
+        "temperature_c": 49.49591666666667,
+        "moisture_kg_kg": 0.04999041666666666,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 210446.0,
+        "drying_time_h": 58.45722222222222,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": 55.43333333333333
+      },
+      {
+        "case": "temperature_plus",
+        "description": "",
+        "temperature_c": 50.49591666666667,
+        "moisture_kg_kg": 0.04999041666666666,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 203870.0,
+        "drying_time_h": 56.63055555555555,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": -54.166666666666664
+      },
+      {
+        "case": "moisture_minus",
+        "description": "",
+        "temperature_c": 49.99591666666667,
+        "moisture_kg_kg": 0.04899041666666666,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 207050.0,
+        "drying_time_h": 57.513888888888886,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": -1.1666666666666667
+      },
+      {
+        "case": "moisture_plus",
+        "description": "",
+        "temperature_c": 49.99591666666667,
+        "moisture_kg_kg": 0.05099041666666666,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 207194.0,
+        "drying_time_h": 57.55388888888889,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": 1.2333333333333334
+      },
+      {
+        "case": "fit_ci_fast_corner",
+        "description": "拟合95%区间中较快干燥的边界角点",
+        "temperature_c": 50.053807126574085,
+        "moisture_kg_kg": 0.049966396568973614,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 206738.0,
+        "drying_time_h": 57.42722222222222,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": -6.366666666666666
+      },
+      {
+        "case": "fit_ci_slow_corner",
+        "description": "拟合95%区间中较慢干燥的边界角点",
+        "temperature_c": 49.98082052915262,
+        "moisture_kg_kg": 0.05007568322272401,
+        "switch_time_s": 14400.0,
+        "drying_time_s": 207226.0,
+        "drying_time_h": 57.562777777777775,
+        "controlling_radius_cm": 0.0,
+        "delta_vs_baseline_min": 1.7666666666666666
+      }
+    ]
+  },
+  "local_sensitivity": {
+    "temperature_step_c": 0.5,
+    "moisture_step_kg_kg": 0.001,
+    "d_drying_time_h_per_temperature_c": -1.826666666666668,
+    "d_drying_time_h_per_moisture_kg_kg": 20.000000000003126,
+    "temperature_elasticity_using_kelvin": -10.259789242950955,
+    "moisture_elasticity": 0.017377896871381627
+  },
+  "production_comparison": {
+    "existing_baseline_drying_time_s": 207017.0,
+    "existing_baseline_drying_time_h": 57.50472222222222,
+    "robust_asymptote": {
+      "drying_time_s": 206865.0,
+      "drying_time_h": 57.4625,
+      "controlling_radius_cm": 0.0,
+      "delta_vs_existing_baseline_min": -2.533333333333333,
+      "relative_change_pct": -0.07342392170691658
+    }
+  },
+  "interpretation": {
+    "primary_conclusion": "Use the robust asymptotic fit as a sensitivity comparator, not as proof that the time-weighted mean is wrong; the observed final hour is already stationary.",
+    "parameter_priority": "Compare normalized elasticities and scenario deltas; Celsius percentages are not used."
+  }
+}

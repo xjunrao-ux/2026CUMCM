@@ -1,0 +1,158 @@
+{
+  "method": {
+    "purpose": "以OU随机过程为依据的问题3模型稳健性分析",
+    "approach_one": "4 h后温度、水分浓度固定为附件1 3--4 h时间加权均值（恒值做法）",
+    "approach_two": "4 h后按3--4 h稳定段Huber稳健标定的精确离散OU/AR(1)过程生成联合随机边界（OU做法）",
+    "common_model": "附件3水热耦合有限体积，粗网格0.025 cm，2/60/2 s，统一粗-细修正",
+    "sigma_1_seeds": 60,
+    "sigma_sweep_seeds_per_level": 24,
+    "sigma_sweep_values": [
+      0.5,
+      1.5,
+      2.0
+    ],
+    "seed_rule": "seed = 20260912 + 1000*round(10*sigma) + k"
+  },
+  "ou_calibration": {
+    "fit_interval_s": [
+      10800.0,
+      14400.0
+    ],
+    "temperature": {
+      "variable": "oven_temperature",
+      "unit": "degC",
+      "sample_count": 61,
+      "transition_count": 60,
+      "sampling_interval_s": 60.0,
+      "huber_c": 1.345,
+      "equilibrium_mean": 49.998934426229496,
+      "discrete_phi": 1e-06,
+      "kappa_per_s": 0.23025850929940456,
+      "relaxation_time_s": 4.342944819032518,
+      "half_life_s": 3.010299956639812,
+      "innovation_scale": 0.18068296382009866,
+      "stationary_scale": 0.180682963820189,
+      "ordinary_mean": 49.998934426229496,
+      "ordinary_standard_deviation": 0.15435336826607313,
+      "ordinary_lag1_correlation": -0.03221061673236021,
+      "phi_at_lower_bound": true
+    },
+    "moisture": {
+      "variable": "oven_moisture_concentration",
+      "unit": "kg/kg",
+      "sample_count": 61,
+      "transition_count": 60,
+      "sampling_interval_s": 60.0,
+      "huber_c": 1.345,
+      "equilibrium_mean": 0.0499870026501955,
+      "discrete_phi": 0.03738801450969816,
+      "kappa_per_s": 0.05477341822629187,
+      "relaxation_time_s": 18.25703109980433,
+      "half_life_s": 12.654809632224609,
+      "innovation_scale": 0.00017337470237030025,
+      "stationary_scale": 0.0001734960066555755,
+      "ordinary_mean": 0.049987540983606554,
+      "ordinary_standard_deviation": 0.00015012945233702923,
+      "ordinary_lag1_correlation": 0.03509578950142417,
+      "phi_at_lower_bound": false
+    },
+    "robust_innovation_correlation": -0.11959465362188985
+  },
+  "baseline_constant_mean": {
+    "temperature_c": 49.99591666666667,
+    "moisture_kg_kg": 0.04999041666666666,
+    "fine_drying_time_h": 57.50472222222222,
+    "coarse_drying_time_h": 57.53333333333333,
+    "additive_correction_h": -0.028611111111111143
+  },
+  "calibration_difference_sigma0": {
+    "ou_path_corrected_h": 57.49916666666667,
+    "ou_path_delta_min": -0.3333333333331723,
+    "huber_constant_corrected_h": 57.49916666666667,
+    "huber_constant_delta_min": -0.3333333333331723,
+    "interpretation": "sigma=0为OU的确定性极限；两行分别为无噪声OU路径与恒定Huber均衡边界，共同衡量均值口径（时间加权均值 vs Huber均衡）的差异。"
+  },
+  "monte_carlo_sigma1": {
+    "sigma_multiplier": 1.0,
+    "case_count": 60,
+    "mean_h": 57.50022222222223,
+    "standard_deviation_h": 0.005743251177392779,
+    "minimum_h": 57.48694444444445,
+    "maximum_h": 57.51027777777778,
+    "p05_h": 57.49236111111111,
+    "p95_h": 57.50863888888889,
+    "delta_mean_min": -0.2699999999998539,
+    "delta_mean_pct": -0.00782544428717991,
+    "spread_p95_p05_min": 0.97666666666683,
+    "range_min": 1.4000000000000057,
+    "share_shorter_than_baseline": 0.75
+  },
+  "sigma1_additional": {
+    "maximum_absolute_delta_min": 1.066666666666407,
+    "share_within_one_minute": 0.9666666666666667,
+    "share_shorter_than_baseline": 0.75,
+    "share_longer_than_baseline": 0.25
+  },
+  "sigma_sweep": [
+    {
+      "sigma_multiplier": 0.5,
+      "case_count": 24,
+      "mean_h": 57.49946759259259,
+      "standard_deviation_h": 0.002916714592046809,
+      "minimum_h": 57.49194444444444,
+      "maximum_h": 57.50416666666667,
+      "p05_h": 57.49583333333333,
+      "p95_h": 57.50344444444445,
+      "delta_mean_min": -0.31527777777766275,
+      "delta_mean_pct": -0.009137735870319715,
+      "spread_p95_p05_min": 0.45666666666704714,
+      "range_min": 0.7333333333336611,
+      "share_shorter_than_baseline": 1.0
+    },
+    {
+      "sigma_multiplier": 1.0,
+      "case_count": 60,
+      "mean_h": 57.50022222222223,
+      "standard_deviation_h": 0.005743251177392779,
+      "minimum_h": 57.48694444444445,
+      "maximum_h": 57.51027777777778,
+      "p05_h": 57.49236111111111,
+      "p95_h": 57.50863888888889,
+      "delta_mean_min": -0.2699999999998539,
+      "delta_mean_pct": -0.00782544428717991,
+      "spread_p95_p05_min": 0.97666666666683,
+      "range_min": 1.4000000000000057,
+      "share_shorter_than_baseline": 0.75
+    },
+    {
+      "sigma_multiplier": 1.5,
+      "case_count": 24,
+      "mean_h": 57.50108796296297,
+      "standard_deviation_h": 0.006929169997262413,
+      "minimum_h": 57.485277777777775,
+      "maximum_h": 57.511944444444445,
+      "p05_h": 57.48941666666667,
+      "p95_h": 57.510194444444444,
+      "delta_mean_min": -0.21805555555545197,
+      "delta_mean_pct": -0.0063199318574450975,
+      "spread_p95_p05_min": 1.246666666666414,
+      "range_min": 1.6000000000002501,
+      "share_shorter_than_baseline": 0.6666666666666666
+    },
+    {
+      "sigma_multiplier": 2.0,
+      "case_count": 24,
+      "mean_h": 57.50113425925926,
+      "standard_deviation_h": 0.009537027265758198,
+      "minimum_h": 57.48083333333334,
+      "maximum_h": 57.513055555555546,
+      "p05_h": 57.48138888888889,
+      "p95_h": 57.51250000000001,
+      "delta_mean_min": -0.2152777777776116,
+      "delta_mean_pct": -0.0062394231713611414,
+      "spread_p95_p05_min": 1.8666666666673848,
+      "range_min": 1.9333333333325697,
+      "share_shorter_than_baseline": 0.625
+    }
+  ]
+}
