@@ -1,0 +1,170 @@
+{
+  "model_scope": {
+    "geometry": "2D axisymmetric cylinder with moving radius and fixed length",
+    "domain": "0<=xi=r/R(t)<=1; 0<=z<=0.125 m",
+    "radial_shrinkage": "Attachment 2 piecewise-linear R(t), identical to main Q4",
+    "axial_shrinkage": "excluded, identical to main Q4 assumption",
+    "constitutive_laws": "Appendix 4 rho(C), cp(C), k(C), D(C,T) without modification",
+    "temperature_state_unit": "K",
+    "latent_heat": "excluded",
+    "evaporation_source": "excluded",
+    "boundary_conditions": "symmetry at xi=0,z=0; original convection on side and end",
+    "drying_threshold": "strict reconstructed max over full 2D product <0.15 kg/kg",
+    "environment_after_4h": "time-weighted mean over Attachment 1 from 3 h to 4 h",
+    "solver": "cell-centred FVM, backward Euler, sparse five-point matrix, Picard coupling"
+  },
+  "grid_and_time": {
+    "production": {
+      "nr": 64,
+      "nz": 40,
+      "nominal_initial_dr_m": 0.0003125,
+      "nominal_dz_m": 0.003125,
+      "elapsed_s": 1190.4239550999991
+    },
+    "coarse": {
+      "nr": 32,
+      "nz": 20,
+      "nominal_initial_dr_m": 0.000625,
+      "nominal_dz_m": 0.00625,
+      "elapsed_s": 253.6485898000028
+    },
+    "time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "saved_interval_s": 60.0,
+    "saved_radii_cm": [
+      0.0,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0,
+      1.1,
+      1.2,
+      1.3,
+      1.4,
+      1.5,
+      1.6,
+      1.7,
+      1.8,
+      1.9,
+      2.0
+    ],
+    "saved_z_m": [
+      0.0,
+      0.005,
+      0.01,
+      0.015,
+      0.02,
+      0.025,
+      0.03,
+      0.035,
+      0.04,
+      0.045,
+      0.05,
+      0.055,
+      0.06,
+      0.065,
+      0.07,
+      0.075,
+      0.08,
+      0.085,
+      0.09,
+      0.095,
+      0.1,
+      0.105,
+      0.11,
+      0.115,
+      0.12,
+      0.125
+    ],
+    "workbook_z_m": [
+      0.0,
+      0.025,
+      0.05,
+      0.075,
+      0.1,
+      0.125
+    ]
+  },
+  "constant_boundary_after_4h": {
+    "temperature_K": 323.1459166666666,
+    "temperature_C_for_reference": 49.99591666666663,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "radius": {
+    "attachment_interval_s": [
+      0.0,
+      259200.0
+    ],
+    "initial_cm": 2.0,
+    "drying_time_cm": 1.2,
+    "source_node_reconstruction_max_error_cm": 0.0,
+    "recorded_nonincreasing": true
+  },
+  "drying_time": {
+    "production_s": 184052.0,
+    "production_h": 51.12555555555556,
+    "coarse_s": 184142.0,
+    "coarse_h": 51.150555555555556,
+    "coarse_production_difference_s": 90.0,
+    "previous_time_s": 184051.0,
+    "previous_maximum_moisture": 0.15000001302450428,
+    "final_maximum_moisture": 0.14999949969274434,
+    "controlling_radius_m": 0.0,
+    "controlling_z_m": 0.0
+  },
+  "one_dimensional_comparison": {
+    "original_main_model_s": 184022.0,
+    "matched_grid_time_step_s": 184052.0,
+    "two_dimensional_minus_matched_one_dimensional_s": 0.0,
+    "matched_initial_radial_cells": 64,
+    "interpretation": "Negative means the added end convection accelerates drying on matched radial/time discretization."
+  },
+  "grid_refinement": {
+    "common_record_count": 3067,
+    "maximum_sampled_moisture_change_kg_kg": 0.055962364569823064,
+    "mean_sampled_moisture_change_kg_kg": 0.00035059623055874067
+  },
+  "whole_product_balances": {
+    "discrete_moisture_storage_change": -0.0004428069518776392,
+    "integrated_moisture_outflow": 0.00044280695187581175,
+    "moisture_residual": -1.827476971832942e-15,
+    "moisture_relative_residual": 4.127028638741716e-12,
+    "integrated_heat_storage_J": 18069.38755616814,
+    "integrated_heat_inflow_J": 18069.3875571195,
+    "heat_residual_J": -9.513569239061326e-07,
+    "heat_relative_residual": 5.265020305191747e-11
+  },
+  "physical_ranges": {
+    "temperature_min_K": 301.15000000005296,
+    "temperature_max_K": 323.25750522663344,
+    "moisture_min_kg_kg": 0.04999959722083761,
+    "moisture_max_kg_kg": 2.550000000000068,
+    "diffusivity_min_m2_s": 6.980176308511476e-12,
+    "diffusivity_max_m2_s": 2.480128205333066e-09
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "invalid_values_outside_current_radius": 0,
+    "missing_values_inside_current_radius": 0,
+    "radial_order_violation_count": 934,
+    "axial_order_violation_count": 5817,
+    "time_monotonicity_violation_count": 5,
+    "maximum_picard_iterations": 10,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "constant_environment": 5529,
+      "threshold_refinement": 3782,
+      "crossing_recomputed": 0
+    }
+  }
+}
