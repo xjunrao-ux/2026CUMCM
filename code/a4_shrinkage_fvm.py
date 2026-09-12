@@ -956,6 +956,11 @@ def main() -> None:
     parser.add_argument("--attachment1", type=Path, help="Path to Attachment 1")
     parser.add_argument("--attachment2", type=Path, help="Path to Attachment 2")
     parser.add_argument("--repo-root", type=Path, help="Repository root")
+    parser.add_argument(
+        "--result-dir",
+        type=Path,
+        help="Output directory (default: result/A_q4_shrinkage)",
+    )
     args = parser.parse_args()
 
     script_path = Path(__file__).resolve()
@@ -970,7 +975,11 @@ def main() -> None:
         if args.attachment2
         else find_attachment(repo_root, "附件2.xlsx")
     )
-    result_dir = repo_root / "results" / "A_problem4_shrinkage"
+    result_dir = (
+        args.result_dir.resolve()
+        if args.result_dir
+        else repo_root / "result" / "A_q4_shrinkage"
+    )
     result_dir.mkdir(parents=True, exist_ok=True)
 
     environment = q2.load_and_preprocess_environment(attachment1)
