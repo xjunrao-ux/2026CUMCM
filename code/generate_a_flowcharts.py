@@ -84,6 +84,8 @@ class Container:
 class Diagram:
     slug: str
     title: str
+    width: int = CANVAS_W
+    height: int = CANVAS_H
     nodes: list[Node] = field(default_factory=list)
     edges: list[Edge] = field(default_factory=list)
     containers: list[Container] = field(default_factory=list)
@@ -320,6 +322,182 @@ def q4_diagram() -> Diagram:
     return d
 
 
+def four_stage_diagram(
+    slug: str,
+    title: str,
+    subtitle: str,
+    stage1: tuple[str, str, str],
+    stage2: tuple[str, str, str],
+    stage3: tuple[str, str, str],
+    solver: str,
+    decision: str,
+    output: str,
+) -> Diagram:
+    """Build a concise portrait diagram with the same four-stage grammar."""
+    d = Diagram(slug, title, width=1200, height=1600)
+    d.nodes += [
+        n(f"{slug}_title", title, 100, 18, 1000, 44, kind="label", font_size=26, bold=True),
+        n(f"{slug}_subtitle", subtitle, 140, 70, 920, 34, kind="label", font_size=17),
+    ]
+    d.containers += [
+        c(f"{slug}_s1", "01  初始化与条件约束", 70, 125, 1060, 250, "#F7F9FC", "#E8EEF5", "#64748B"),
+        c(f"{slug}_s2", "02  物理模型建立", 70, 405, 1060, 310, ORANGE_FILL, ORANGE_HEAD, ORANGE),
+        c(f"{slug}_s3", "03  数学模型建立", 70, 745, 1060, 330, BLUE_FILL, BLUE_HEAD, BLUE),
+        c(f"{slug}_s4", "04  数值求解与结果输出", 70, 1105, 1060, 445, GREEN_FILL, GREEN_HEAD, GREEN),
+    ]
+
+    # Stage 1: three concise setup blocks.
+    for index, (text_value, x) in enumerate(zip(stage1, (105, 450, 795)), 1):
+        d.nodes.append(
+            n(f"{slug}_s1_b{index}", text_value, x, 205, 300, 120, fill="#FFFFFF", stroke="#64748B")
+        )
+    d.edges += [
+        e(f"{slug}_s1_e1", (405, 265), (449, 265), color="#64748B"),
+        e(f"{slug}_s1_e2", (750, 265), (794, 265), color="#64748B"),
+        e(f"{slug}_between12", (600, 375), (600, 404), color=CONTROL),
+    ]
+
+    # Stage 2: two physical mechanisms converge to one interpretation.
+    d.nodes += [
+        n(f"{slug}_s2_left", stage2[0], 130, 485, 400, 125, fill="#FFFFFF", stroke=ORANGE, bold=True),
+        n(f"{slug}_s2_right", stage2[1], 670, 485, 400, 125, fill="#FFFFFF", stroke=ORANGE, bold=True),
+        n(f"{slug}_s2_note", stage2[2], 260, 635, 680, 55, fill="#FFFDF9", stroke=ORANGE),
+    ]
+    d.edges += [
+        e(f"{slug}_s2_split_l", (600, 458), (600, 472), (330, 472), (330, 484), color=ORANGE),
+        e(f"{slug}_s2_split_r", (600, 458), (600, 472), (870, 472), (870, 484), color=ORANGE),
+        e(f"{slug}_s2_merge_l", (330, 610), (330, 622), (600, 622), (600, 634), color=ORANGE),
+        e(f"{slug}_s2_merge_r", (870, 610), (870, 622), (600, 622), (600, 634), color=ORANGE),
+        e(f"{slug}_between23", (600, 715), (600, 744), color=CONTROL),
+    ]
+
+    # Stage 3: governing models converge to one compact mathematical statement.
+    d.nodes += [
+        n(f"{slug}_s3_left", stage3[0], 130, 825, 400, 130, fill="#FFFFFF", stroke=BLUE, bold=True),
+        n(f"{slug}_s3_right", stage3[1], 670, 825, 400, 130, fill="#FFFFFF", stroke=BLUE, bold=True),
+        n(f"{slug}_s3_note", stage3[2], 250, 985, 700, 65, fill="#F9FCFF", stroke=BLUE),
+    ]
+    d.edges += [
+        e(f"{slug}_s3_split_l", (600, 798), (600, 812), (330, 812), (330, 824), color=BLUE),
+        e(f"{slug}_s3_split_r", (600, 798), (600, 812), (870, 812), (870, 824), color=BLUE),
+        e(f"{slug}_s3_merge_l", (330, 955), (330, 972), (600, 972), (600, 984), color=BLUE),
+        e(f"{slug}_s3_merge_r", (870, 955), (870, 972), (600, 972), (600, 984), color=BLUE),
+        e(f"{slug}_between34", (600, 1075), (600, 1104), color=CONTROL),
+    ]
+
+    # Stage 4: one solver, one stopping decision, one output.
+    d.nodes += [
+        n(f"{slug}_solver", solver, 140, 1185, 920, 70, fill="#FFFFFF", stroke=GREEN, bold=True),
+        n(f"{slug}_decision", decision, 350, 1290, 500, 95, kind="decision", fill="#FFFFFF", stroke=GREEN),
+        n(f"{slug}_output", output, 140, 1430, 920, 80, fill="#FFFFFF", stroke=GREEN, bold=True),
+    ]
+    d.edges += [
+        e(f"{slug}_s4_e1", (600, 1158), (600, 1184), color=GREEN),
+        e(f"{slug}_s4_e2", (600, 1255), (600, 1289), color=GREEN),
+        e(f"{slug}_s4_loop", (349, 1337), (92, 1337), (92, 1220), (139, 1220), color=GREEN, label="否", label_pos=(104, 1312)),
+        e(f"{slug}_s4_yes", (600, 1385), (600, 1429), color=GREEN, label="是", label_pos=(616, 1393)),
+    ]
+    return d
+
+
+def simplified_stage_diagrams() -> list[Diagram]:
+    common_subtitle = "从条件定义到物理机制、数学表达与数值输出的四阶段流程"
+    return [
+        four_stage_diagram(
+            "A_q1_four_stage_v3",
+            "问题一｜固定物性下的径向水热同步传递",
+            common_subtitle,
+            (
+                "药材近似为长圆柱\n仅考虑一维径向传递",
+                "给定初始温度与水分\n半径保持不变",
+                "由附件1构造 T0(t)、C0(t)\n中心对称、表面对流",
+            ),
+            (
+                "热量传递\n热风加热药材表面\n热量向内部传导",
+                "水分迁移\n表面向空气失水\n内部水分向外扩散",
+                "两个物理场共享几何与边界，同步推进但无直接反馈",
+            ),
+            (
+                "能量守恒模型\n结合 Fourier 导热定律\n描述径向温度变化",
+                "质量守恒模型\n结合 Fick 扩散定律\n描述径向水分变化",
+                "形成带中心对称与表面 Robin 条件的两个初边值问题",
+            ),
+            "有限体积离散；后向 Euler 时间推进\n温度直接求解，水分采用 Picard—Thomas 迭代",
+            "是否达到 1800 s？",
+            "重构并采样温度场、水分场\n生成表1、表2与 result1.xlsx，完成守恒和稳定性检查",
+        ),
+        four_stage_diagram(
+            "A_q2_four_stage_v3",
+            "问题二｜温湿相关物性驱动的非线性水热耦合",
+            common_subtitle,
+            (
+                "沿用一维径向长圆柱\n半径保持不变",
+                "给定初始温度与水分\n采用附录3物性关系",
+                "由附件1构造 T0(t)、C0(t)\n中心对称、表面对流",
+            ),
+            (
+                "水分改变热物性\n进而影响药材温度场",
+                "温度与水分共同改变扩散能力\n并反馈水分迁移",
+                "形成“水分 → 温度 → 扩散 → 水分”的双向物性耦合闭环",
+            ),
+            (
+                "变物性热传导模型\n热参数随水分状态更新",
+                "非线性水分扩散模型\n扩散能力随温度、水分更新",
+                "两个守恒方程构成非线性耦合初边值问题",
+            ),
+            "表面加密有限体积离散\n在每个时间步内进行 Picard—Thomas 耦合迭代",
+            "是否达到 3 h？",
+            "重构并采样温度场、水分场\n生成表3、表4与 result2.xlsx，完成耦合收敛与守恒检查",
+        ),
+        four_stage_diagram(
+            "A_q3_four_stage_v3",
+            "问题三｜固定半径下的完整干燥过程与终止事件",
+            common_subtitle,
+            (
+                "继承问题二的固定半径模型\n从初始状态重新计算",
+                "前期采用附件1的 T0(t)、C0(t)\n后期采用稳定环境边界",
+                "要求药材所有位置\n均满足干燥标准",
+            ),
+            (
+                "热量快速向内部传递\n温度逐步接近环境状态",
+                "水分由内部向表面迁移\n后期受内部扩散控制",
+                "干燥终点由全域最湿位置决定，而不是表面或平均水分",
+            ),
+            (
+                "沿用问题二的\n非线性水热耦合模型",
+                "定义全域最大水分 Cmax\n以首次越过阈值作为终止事件",
+                "构成带长期边界、动态步长和事件判定的时间演化问题",
+            ),
+            "采用自适应时间步持续推进\n每步完成水热耦合求解并更新 Cmax",
+            "Cmax < 0.15 kg/kg？",
+            "锁定首次达标时刻并输出全过程水分场\n生成表5与 result3.xlsx，完成加密和守恒验证",
+        ),
+        four_stage_diagram(
+            "A_q4_four_stage_v3",
+            "问题四｜药材收缩条件下的移动边界水热耦合",
+            common_subtitle,
+            (
+                "附件2给出时变半径 R(t)\n假设药材均匀径向收缩",
+                "给定初始温度、水分与尺寸\n采用附录4物性关系",
+                "环境边界统一记为 T0(t)、C0(t)\n中心对称、表面对流",
+            ),
+            (
+                "半径减小使内部扩散路径缩短\n并改变表面积与体积",
+                "温度、水分与材料物性相互影响\n共同决定干燥进程",
+                "收缩几何与变物性耦合形成移动边界传热传质过程",
+            ),
+            (
+                "引入材料坐标 ξ=r/R(t)\n将移动物理域映射为固定计算域",
+                "建立变半径下的\n热量与水分守恒模型",
+                "耦合 R(t)、温度场、水分场及表面对流边界",
+            ),
+            "每步更新半径、物理网格与表面阻力\n在当前收缩网格上进行水热耦合求解",
+            "Cmax < 0.15 kg/kg？",
+            "确定移动边界下的干燥时长并输出水分场\n生成表6与 result4.xlsx，域外位置留空并完成验证",
+        ),
+    ]
+
+
 def combined_diagram() -> Diagram:
     """Compact four-quadrant overview for the four questions."""
     d = Diagram("A_four_questions_flowchart_v2", "A题四问建模与数值求解总流程")
@@ -481,8 +659,8 @@ def write_drawio(diagram: Diagram, path: Path) -> None:
     model = ET.SubElement(
         page,
         "mxGraphModel",
-        dx=str(CANVAS_W),
-        dy=str(CANVAS_H),
+        dx=str(diagram.width),
+        dy=str(diagram.height),
         grid="0",
         gridSize="10",
         guides="1",
@@ -492,8 +670,8 @@ def write_drawio(diagram: Diagram, path: Path) -> None:
         fold="1",
         page="1",
         pageScale="1",
-        pageWidth=str(CANVAS_W),
-        pageHeight=str(CANVAS_H),
+        pageWidth=str(diagram.width),
+        pageHeight=str(diagram.height),
         math="0",
         shadow="0",
         background="#FFFFFF",
@@ -581,7 +759,7 @@ def draw_arrow(draw: ImageDraw.ImageDraw, edge: Edge, scale: int) -> None:
 
 def render_png(diagram: Diagram, path: Path) -> None:
     scale = 2
-    image = Image.new("RGB", (CANVAS_W * scale, CANVAS_H * scale), "white")
+    image = Image.new("RGB", (diagram.width * scale, diagram.height * scale), "white")
     draw = ImageDraw.Draw(image)
 
     for group in diagram.containers:
@@ -615,7 +793,7 @@ def render_png(diagram: Diagram, path: Path) -> None:
             draw.line(pts + [pts[0]], fill=rgb(node.stroke), width=node.stroke_width * scale, joint="curve")
         draw_centered_text(draw, node, scale)
 
-    image = image.resize((CANVAS_W, CANVAS_H), Image.Resampling.LANCZOS)
+    image = image.resize((diagram.width, diagram.height), Image.Resampling.LANCZOS)
     path.parent.mkdir(parents=True, exist_ok=True)
     image.save(path, dpi=(300, 300), optimize=True)
 
@@ -627,15 +805,28 @@ def main() -> None:
         action="store_true",
         help="Generate only the compact four-quadrant overview.",
     )
+    parser.add_argument(
+        "--simple-four",
+        action="store_true",
+        help="Generate only the four concise four-stage portrait diagrams.",
+    )
     args = parser.parse_args()
     repo_root = Path(__file__).resolve().parents[1]
     drawio_dir = repo_root / "docs" / "flowcharts"
     png_dir = repo_root / "picture" / "A_flowcharts"
-    diagrams = (
-        [combined_diagram()]
-        if args.combined_only
-        else [q1_diagram(), q2_diagram(), q3_diagram(), q4_diagram(), combined_diagram()]
-    )
+    if args.combined_only:
+        diagrams = [combined_diagram()]
+    elif args.simple_four:
+        diagrams = simplified_stage_diagrams()
+    else:
+        diagrams = [
+            q1_diagram(),
+            q2_diagram(),
+            q3_diagram(),
+            q4_diagram(),
+            combined_diagram(),
+            *simplified_stage_diagrams(),
+        ]
     for diagram in diagrams:
         drawio_path = drawio_dir / f"{diagram.slug}.drawio"
         png_path = png_dir / f"{diagram.slug}.png"
