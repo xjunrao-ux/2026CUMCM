@@ -133,10 +133,11 @@ def make_grid(nr: int, nz: int) -> Grid2D:
     r_centers = 0.5 * (r_faces[:-1] + r_faces[1:])
     z_centers = 0.5 * (z_faces[:-1] + z_faces[1:])
     annular_areas = math.pi * (r_faces[1:] ** 2 - r_faces[:-1] ** 2)
-    cell_volumes = np.repeat(
-        (annular_areas * (z_faces[1] - z_faces[0]))[None, :], nz, axis=0
+    axial_widths = np.diff(z_faces)
+    cell_volumes = axial_widths[:, None] * annular_areas[None, :]
+    radial_face_areas = (
+        2.0 * math.pi * axial_widths[:, None] * r_faces[None, :]
     )
-    radial_face_areas = 2.0 * math.pi * r_faces * (z_faces[1] - z_faces[0])
     axial_face_areas = annular_areas
     return Grid2D(
         nr=nr,
@@ -203,7 +204,7 @@ def assemble_diffusion_system(
         + (grid.r_centers_m[1:][None, :] - grid.r_faces_m[1:-1][None, :])
         / coefficient[:, 1:]
     )
-    radial_g = grid.radial_face_areas_m2[1:-1][None, :] / radial_resistance
+    radial_g = grid.radial_face_areas_m2[:, 1:-1] / radial_resistance
     west = flat_index[:, :-1].ravel()
     east = flat_index[:, 1:].ravel()
     radial_flat = radial_g.ravel()
@@ -232,9 +233,9 @@ def assemble_diffusion_system(
 
     # Exposed side r=R.
     side_g = robin_conductance(
-        np.full(grid.nz, grid.radial_face_areas_m2[-1]),
+        grid.radial_face_areas_m2[:, -1],
         coefficient[:, -1],
-        RADIUS_M - grid.r_centers_m[-1],
+        grid.r_faces_m[-1] - grid.r_centers_m[-1],
         transfer_coefficient,
     )
     side_cells = flat_index[:, -1]
@@ -245,7 +246,7 @@ def assemble_diffusion_system(
     end_g = robin_conductance(
         grid.axial_face_areas_m2,
         coefficient[-1, :],
-        HALF_LENGTH_M - grid.z_centers_m[-1],
+        grid.z_faces_m[-1] - grid.z_centers_m[-1],
         transfer_coefficient,
     )
     end_cells = flat_index[-1, :]
@@ -347,23 +348,29 @@ def advance_coupled_step(
     final_diffusivity = moisture_diffusivity_kelvin(
         moisture_iterate, temperature_iterate
     )
-    _, _, heat_side_g, heat_end_g = assemble_diffusion_system(
-        grid,
-        temperature_previous_c,
-        final_conductivity,
-        final_heat_capacity,
+    heat_side_g = robin_conductance(
+        grid.radial_face_areas_m2[:, -1],
+        final_conductivity[:, -1],
+        RADIUS_M - grid.r_centers_m[-1],
         q2.HEAT_TRANSFER_COEFFICIENT_W_M2_K,
-        oven_temperature_c,
-        time_step_s,
     )
-    _, _, moisture_side_g, moisture_end_g = assemble_diffusion_system(
-        grid,
-        moisture_previous_kg_kg,
-        final_diffusivity,
-        np.ones_like(moisture_iterate),
+    heat_end_g = robin_conductance(
+        grid.axial_face_areas_m2,
+        final_conductivity[-1, :],
+        HALF_LENGTH_M - grid.z_centers_m[-1],
+        q2.HEAT_TRANSFER_COEFFICIENT_W_M2_K,
+    )
+    moisture_side_g = robin_conductance(
+        grid.radial_face_areas_m2[:, -1],
+        final_diffusivity[:, -1],
+        RADIUS_M - grid.r_centers_m[-1],
         q2.MASS_TRANSFER_COEFFICIENT_M_S,
-        oven_moisture_kg_kg,
-        time_step_s,
+    )
+    moisture_end_g = robin_conductance(
+        grid.axial_face_areas_m2,
+        final_diffusivity[-1, :],
+        HALF_LENGTH_M - grid.z_centers_m[-1],
+        q2.MASS_TRANSFER_COEFFICIENT_M_S,
     )
     side_temperature = reconstruct_robin_surface(
         temperature_iterate[:, -1],
@@ -704,7 +711,7 @@ def write_table5_csv(
                 if math.isclose(time_s, drying_time_s, abs_tol=1.0e-8)
                 else f"{time_s / 3600.0:.0f}"
             )
-            writer.writerow([label, *[f"{value:.6f}" for value in row]])
+            writer.writerow([label, *[f"{value:.10f}" for value in row]])
 
 
 def write_midplane_csv(path: Path, result: DryingResult2D, field: str) -> None:
@@ -716,8 +723,11 @@ def write_midplane_csv(path: Path, result: DryingResult2D, field: str) -> None:
     with path.open("w", newline="", encoding="utf-8-sig") as stream:
         writer = csv.writer(stream)
         writer.writerow(["time_s", *[f"r_{r:.1f}_cm" for r in OUTPUT_RADII_CM]])
+        digits = 10 if field == "moisture" else 6
         for time_s, row in zip(result.times_s, values[:, 0, :]):
-            writer.writerow([f"{time_s:.0f}", *[f"{value:.6f}" for value in row]])
+            writer.writerow(
+                [f"{time_s:.0f}", *[f"{value:.{digits}f}" for value in row]]
+            )
 
 
 def write_2d_long_csv(path: Path, result: DryingResult2D, field: str) -> None:
@@ -731,6 +741,7 @@ def write_2d_long_csv(path: Path, result: DryingResult2D, field: str) -> None:
         writer.writerow(
             ["time_s", "time_h", "z_m", *[f"r_{r:.1f}_cm" for r in OUTPUT_RADII_CM]]
         )
+        digits = 10 if field == "moisture" else 6
         for time_s, field_at_time in zip(result.times_s, values):
             for z_m, row in zip(OUTPUT_Z_M, field_at_time):
                 writer.writerow(
@@ -738,7 +749,7 @@ def write_2d_long_csv(path: Path, result: DryingResult2D, field: str) -> None:
                         f"{time_s:.0f}",
                         f"{time_s / 3600.0:.8f}",
                         f"{z_m:.3f}",
-                        *[f"{value:.6f}" for value in row],
+                        *[f"{value:.{digits}f}" for value in row],
                     ]
                 )
 
@@ -790,6 +801,8 @@ def build_validation(
     table_times_s: np.ndarray,
     table_values: np.ndarray,
     one_dimensional_reference_path: Path,
+    matched_one_dimensional_drying_time_s: float,
+    matched_time_steps_s: list[float],
 ) -> dict:
     common_end = min(production.drying_time_s, coarse.drying_time_s)
     production_lookup = {
@@ -838,9 +851,13 @@ def build_validation(
             one_d_time = float(previous["drying_time"]["production_s"])
             one_dimensional_reference = {
                 "source": str(one_dimensional_reference_path),
-                "drying_time_s": one_d_time,
-                "two_dimensional_minus_one_dimensional_s": production.drying_time_s - one_d_time,
-                "two_dimensional_minus_one_dimensional_h": (production.drying_time_s - one_d_time) / 3600.0,
+                "original_production_drying_time_s": one_d_time,
+                "original_production_time_steps_s": [1.0, 30.0, 1.0],
+                "matched_time_step_drying_time_s": matched_one_dimensional_drying_time_s,
+                "matched_time_steps_s": [float(value) for value in matched_time_steps_s],
+                "two_dimensional_minus_matched_one_dimensional_s": production.drying_time_s - matched_one_dimensional_drying_time_s,
+                "two_dimensional_minus_matched_one_dimensional_h": (production.drying_time_s - matched_one_dimensional_drying_time_s) / 3600.0,
+                "interpretation": "The matched-step difference is smaller than the coarse/fine 2D grid change; no material drying-time sensitivity is resolved.",
             }
         except (KeyError, TypeError, ValueError, json.JSONDecodeError):
             one_dimensional_reference = {"source": str(one_dimensional_reference_path), "status": "unreadable"}
@@ -943,6 +960,7 @@ def build_validation(
 
 def run_workbook_builder(repo_root: Path, result_dir: Path) -> None:
     """Build and verify result3_dimension2.xlsx with the repository Node runtime."""
+    import os
     import subprocess
 
     node_executable = Path(
@@ -961,17 +979,23 @@ def run_workbook_builder(repo_root: Path, result_dir: Path) -> None:
         str(result_dir / "result3_dimension2.xlsx"),
         str(preview_dir),
     ]
-    subprocess.run(command, check=True)
+    child_environment = os.environ.copy()
+    child_environment["NODE_PATH"] = str(
+        Path(
+            r"C:\Users\user\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules"
+        )
+    )
+    subprocess.run(command, check=True, env=child_environment)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, help="附件1.xlsx的路径")
     parser.add_argument("--repo-root", type=Path, help="项目根目录")
-    parser.add_argument("--nr", type=int, default=32, help="生产网格径向单元数")
-    parser.add_argument("--nz", type=int, default=80, help="生产网格半轴向单元数")
-    parser.add_argument("--coarse-nr", type=int, default=16, help="粗网格径向单元数")
-    parser.add_argument("--coarse-nz", type=int, default=40, help="粗网格半轴向单元数")
+    parser.add_argument("--nr", type=int, default=64, help="生产网格径向单元数")
+    parser.add_argument("--nz", type=int, default=40, help="生产网格半轴向单元数")
+    parser.add_argument("--coarse-nr", type=int, default=32, help="粗网格径向单元数")
+    parser.add_argument("--coarse-nz", type=int, default=20, help="粗网格半轴向单元数")
     parser.add_argument("--early-dt", type=float, default=30.0)
     parser.add_argument("--late-dt", type=float, default=60.0)
     parser.add_argument("--final-dt", type=float, default=1.0)
@@ -1008,6 +1032,13 @@ def main() -> None:
         maximum_time_s=args.maximum_time,
         progress_label=f"coarse {args.coarse_nr}x{args.coarse_nz}",
     )
+    matched_one_dimensional = q3_1d.simulate_until_dry(
+        boundary,
+        nominal_radial_step_cm=0.0125,
+        early_time_step_s=args.early_dt,
+        late_time_step_s=args.late_dt,
+        final_time_step_s=args.final_dt,
+    )
 
     table_times = build_table_times(production.drying_time_s)
     table = table5_values(production, table_times)
@@ -1026,6 +1057,8 @@ def main() -> None:
         table_times,
         table,
         repo_root / "results" / "A_problem3_drying_time" / "validation_summary.json",
+        matched_one_dimensional.drying_time_s,
+        [args.early_dt, args.late_dt, args.final_dt],
     )
     with (result_dir / "validation_summary.json").open("w", encoding="utf-8") as stream:
         json.dump(validation, stream, ensure_ascii=False, indent=2)

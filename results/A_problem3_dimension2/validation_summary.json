@@ -32,18 +32,34 @@
   },
   "grid_and_time": {
     "production": {
-      "nr": 16,
+      "nr": 64,
       "nz": 40,
-      "dr_m": 0.00125,
-      "dz_m": 0.003125,
-      "elapsed_s": 77.80405690000043
+      "nominal_dr_m": 0.0003125,
+      "nominal_dz_m": 0.003125,
+      "radial_cell_width_range_m": [
+        4.8828124999990286e-06,
+        0.0006201171875
+      ],
+      "axial_cell_width_range_m": [
+        7.812499999999833e-05,
+        0.006171875000000007
+      ],
+      "elapsed_s": 610.3155409000028
     },
     "coarse": {
-      "nr": 16,
-      "nz": 40,
-      "dr_m": 0.00125,
-      "dz_m": 0.003125,
-      "elapsed_s": 77.80405690000043
+      "nr": 32,
+      "nz": 20,
+      "nominal_dr_m": 0.000625,
+      "nominal_dz_m": 0.00625,
+      "radial_cell_width_range_m": [
+        1.9531249999999584e-05,
+        0.00123046875
+      ],
+      "axial_cell_width_range_m": [
+        0.00031249999999999334,
+        0.012187500000000004
+      ],
+      "elapsed_s": 121.46886289999384
     },
     "saved_interval_s": 60.0,
     "saved_radii_cm": [
@@ -106,9 +122,9 @@
       0.125
     ],
     "production_time_step_counts": {
-      "measured_environment": 240,
-      "constant_environment": 3173,
-      "threshold_refinement": 6912
+      "measured_environment": 480,
+      "constant_environment": 3102,
+      "threshold_refinement": 6616
     }
   },
   "constant_boundary_after_4h": {
@@ -117,58 +133,70 @@
     "moisture_kg_kg": 0.04999041666666666
   },
   "drying_time": {
-    "production_s": 211692.0,
-    "production_h": 58.803333333333335,
-    "coarse_s": 211692.0,
-    "coarse_h": 58.803333333333335,
-    "coarse_production_difference_s": 0.0,
-    "previous_time_s": 211691.0,
-    "previous_maximum_moisture": 0.15000006437569163,
-    "final_maximum_moisture": 0.14999978557651344,
+    "production_s": 207136.0,
+    "production_h": 57.53777777777778,
+    "coarse_s": 207252.0,
+    "coarse_h": 57.57,
+    "coarse_production_difference_s": 116.0,
+    "previous_time_s": 207135.0,
+    "previous_maximum_moisture": 0.1500000278029722,
+    "final_maximum_moisture": 0.14999973661803306,
     "controlling_radius_m": 0.0,
     "controlling_z_m": 0.0
   },
   "grid_refinement": {
-    "common_record_count": 3529,
-    "maximum_sampled_moisture_change_kg_kg": 0.0,
-    "mean_sampled_moisture_change_kg_kg": 0.0
+    "common_record_count": 3452,
+    "maximum_sampled_moisture_change_kg_kg": 0.016950613094512068,
+    "mean_sampled_moisture_change_kg_kg": 0.0001738695077862104
   },
   "whole_product_balances": {
-    "moisture_stored_change_m3_kg_kg": -0.0007630066940042349,
-    "integrated_moisture_outflow_m3_kg_kg": 0.0007630066940165882,
-    "moisture_residual": 1.2353291133082589e-14,
-    "moisture_relative_residual": 1.6190278840219483e-11,
-    "integrated_heat_storage_J": 20927.479995163118,
-    "integrated_heat_inflow_J": 20927.47999516339,
-    "heat_residual_J": -2.7284841053187847e-10,
-    "heat_relative_residual": 1.3037805344692111e-14
+    "moisture_stored_change_m3_kg_kg": -0.0007629713342043308,
+    "integrated_moisture_outflow_m3_kg_kg": 0.0007629713341995268,
+    "moisture_residual": -4.8039914060660216e-15,
+    "moisture_relative_residual": 6.296424506008332e-12,
+    "integrated_heat_storage_J": 20925.813855573382,
+    "integrated_heat_inflow_J": 20925.81385583458,
+    "heat_residual_J": -2.611996023915708e-07,
+    "heat_relative_residual": 1.2482171742091769e-11
   },
   "checks": {
     "previous_state_not_dry": true,
     "final_state_all_dry": true,
-    "minimum_saved_moisture": 0.05012909051438037,
-    "radial_order_violation_count": 648,
-    "axial_order_violation_count": 11351,
+    "minimum_saved_moisture": 0.049997328772596716,
+    "radial_order_violation_count": 297,
+    "axial_order_violation_count": 11334,
     "time_monotonicity_violation_count": 0,
-    "maximum_picard_iterations": 6,
-    "minimum_diffusivity_m2_s": 9.521864411451768e-12,
-    "maximum_diffusivity_m2_s": 1.2546509066213507e-08
+    "maximum_picard_iterations": 14,
+    "minimum_diffusivity_m2_s": 1.988332062274619e-12,
+    "maximum_diffusivity_m2_s": 1.2551856607579168e-08
   },
   "one_dimensional_reference": {
     "source": "C:\\Users\\user\\Documents\\GitHub\\2026CUMCM\\results\\A_problem3_drying_time\\validation_summary.json",
-    "drying_time_s": 207017.0,
-    "two_dimensional_minus_one_dimensional_s": 4675.0,
-    "two_dimensional_minus_one_dimensional_h": 1.2986111111111112
+    "original_production_drying_time_s": 207017.0,
+    "original_production_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "matched_time_step_drying_time_s": 207110.0,
+    "matched_time_steps_s": [
+      30.0,
+      60.0,
+      1.0
+    ],
+    "two_dimensional_minus_matched_one_dimensional_s": 26.0,
+    "two_dimensional_minus_matched_one_dimensional_h": 0.007222222222222222,
+    "interpretation": "The matched-step difference is smaller than the coarse/fine 2D grid change; no material drying-time sensitivity is resolved."
   },
   "table5_midplane": {
     "row_count": 10,
-    "last_time_h": 58.803333333333335,
+    "last_time_h": 57.53777777777778,
     "last_row": [
-      0.14999978557651344,
-      0.14774812433643977,
-      0.1406020730504436,
-      0.12612500955060385,
-      0.052531484988763484
+      0.14999973661803306,
+      0.14768241817099348,
+      0.1401999960015006,
+      0.12490082846583198,
+      0.05264888134984356
     ]
   }
 }
