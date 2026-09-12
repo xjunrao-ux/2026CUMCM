@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" agent="Codex" version="24.7.17" pages="1">
+  <diagram id="A_q1_flowchart_v1" name="流程图">
+    <mxGraphModel dx="1600" dy="1200" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="q1_heat_group_bg" value="" style="rounded=1;arcSize=10;html=1;fillColor=#FFF7EE;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="160" y="400" width="600" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_heat_group_header" value="" style="rounded=1;arcSize=10;html=1;fillColor=#FCE6D1;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="160" y="400" width="600" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_heat_group_title" value="温度场求解" style="text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;fontSize=22;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="180" y="406" width="560" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_heat_group_border_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=none;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="960" as="sourcePoint" />
+            <mxPoint x="760" y="400" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="160" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_heat_group_border_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=none;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="400" as="sourcePoint" />
+            <mxPoint x="160" y="960" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="760" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_moist_group_bg" value="" style="rounded=1;arcSize=10;html=1;fillColor=#F3F8FF;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="840" y="400" width="600" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_moist_group_header" value="" style="rounded=1;arcSize=10;html=1;fillColor=#DDEEFF;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="840" y="400" width="600" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_moist_group_title" value="水分场求解" style="text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;fontSize=22;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="860" y="406" width="560" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_moist_group_border_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=none;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="840" y="960" as="sourcePoint" />
+            <mxPoint x="1440" y="400" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="840" y="400" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_moist_group_border_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=none;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1440" y="400" as="sourcePoint" />
+            <mxPoint x="840" y="960" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1440" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#596773;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="131" as="sourcePoint" />
+            <mxPoint x="800" y="148" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#596773;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="216" as="sourcePoint" />
+            <mxPoint x="800" y="233" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#596773;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="308" as="sourcePoint" />
+            <mxPoint x="800" y="323" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_split_l" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="799" y="378" as="sourcePoint" />
+            <mxPoint x="460" y="463" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="799" y="390" />
+              <mxPoint x="460" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_split_r" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="801" y="378" as="sourcePoint" />
+            <mxPoint x="1140" y="453" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="801" y="390" />
+              <mxPoint x="1140" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_t1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="526" as="sourcePoint" />
+            <mxPoint x="460" y="548" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_t2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="616" as="sourcePoint" />
+            <mxPoint x="460" y="638" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_t3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="709" as="sourcePoint" />
+            <mxPoint x="460" y="733" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_t4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="801" as="sourcePoint" />
+            <mxPoint x="460" y="828" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_c1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1140" y="524" as="sourcePoint" />
+            <mxPoint x="1140" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_c2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1140" y="608" as="sourcePoint" />
+            <mxPoint x="1140" y="623" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_c3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1140" y="694" as="sourcePoint" />
+            <mxPoint x="1140" y="708" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_c4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1140" y="779" as="sourcePoint" />
+            <mxPoint x="1140" y="798" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_picard_no" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1407" y="841" as="sourcePoint" />
+            <mxPoint x="1397" y="574" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1490" y="841" />
+              <mxPoint x="1490" y="574" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_picard_yes" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1140" y="883" as="sourcePoint" />
+            <mxPoint x="1140" y="893" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_merge_l" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#F28C28;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="460" y="891" as="sourcePoint" />
+            <mxPoint x="710" y="978" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="460" y="960" />
+              <mxPoint x="710" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_merge_r" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2F80ED;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1140" y="950" as="sourcePoint" />
+            <mxPoint x="890" y="978" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1140" y="960" />
+              <mxPoint x="890" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_outer_no" value="否" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#596773;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="548" y="1024" as="sourcePoint" />
+            <mxPoint x="498" y="350" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="80" y="1024" />
+              <mxPoint x="80" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_outer_yes" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#596773;strokeWidth=3;endArrow=block;endFill=1;endSize=7;fontSize=17;fontStyle=1;fontColor=#374151;fontFamily=Microsoft YaHei;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="800" y="1069" as="sourcePoint" />
+            <mxPoint x="800" y="1088" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="q1_title" value="问题一：固定物性温度—水分场同步求解流程" style="text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;fontSize=26;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="12" width="1200" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_input" value="附件1环境数据、附录2物性参数&lt;br&gt;药材尺寸与初始状态" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="420" y="65" width="760" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_prep" value="检查时间序列与数据完整性&lt;br&gt;对 T∞(t)、C∞(t) 作分段线性插值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="420" y="150" width="760" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_init" value="T(r,0)=28 ℃，C(r,0)=2.55 kg/kg&lt;br&gt;温度均匀网格；水分表面加密网格" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="390" y="235" width="820" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_next" value="进入当前时间步并更新环境边界" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F7F8FA;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="500" y="325" width="600" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_t_env" value="读取当前 T∞(t)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="205" y="465" width="510" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_t_eq" value="建立圆柱径向导热&lt;br&gt;有限体积方程" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="205" y="550" width="510" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_t_disc" value="后向 Euler：Δt=0.25 s&lt;br&gt;均匀网格：Δr=0.025 cm" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="205" y="640" width="510" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_t_solve" value="Thomas 算法求解&lt;br&gt;三对角方程组" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="205" y="735" width="510" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_t_out" value="得到 T^(n+1)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFDF9;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="205" y="830" width="510" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_c_env" value="读取当前 C∞(t)&lt;br&gt;以 Cⁿ 作为 Picard 初值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="885" y="455" width="510" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_c_coef" value="计算 D(C)&lt;br&gt;并更新界面传质系数" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="885" y="542" width="510" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_c_eq" value="建立非线性 Fick 扩散方程&lt;br&gt;表面内外阻力串联" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="885" y="625" width="510" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_c_solve" value="后向 Euler：Δt=0.125 s&lt;br&gt;Thomas 算法求解" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="885" y="710" width="510" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_c_conv" value="max|C^(m+1)−C^m| &amp;lt; 10^(-10)？" style="rhombus;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=17;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;" vertex="1" parent="1">
+          <mxGeometry x="875" y="800" width="530" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_c_out" value="得到 C^(n+1) 并重构表面值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FAFDFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="885" y="895" width="510" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_end" value="记录整数秒结果；t = 1800 s？" style="rhombus;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;" vertex="1" parent="1">
+          <mxGeometry x="550" y="980" width="500" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="q1_output" value="插值到 0.1 cm 输出网格，提取表1、表2&lt;br&gt;生成 result1.xlsx，并进行网格、守恒与物理合理性检查" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F7F8FA;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1090" width="840" height="78" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
