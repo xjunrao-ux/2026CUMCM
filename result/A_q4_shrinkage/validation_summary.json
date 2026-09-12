@@ -52,7 +52,7 @@
   "grid_refinement": {
     "common_record_count": 3067,
     "maximum_moisture_change_kg_kg": 0.0001856785735050437,
-    "mean_moisture_change_kg_kg": 5.287635537677097e-06
+    "mean_moisture_change_kg_kg": 5.287635537677095e-06
   },
   "discrete_moisture_balance": {
     "summed_storage_change": -0.0017477127232918281,

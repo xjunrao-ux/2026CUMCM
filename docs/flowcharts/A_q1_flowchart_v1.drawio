@@ -203,7 +203,7 @@
         <mxCell id="q1_input" value="附件1环境数据、附录2物性参数&lt;br&gt;药材尺寸与初始状态" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
           <mxGeometry x="420" y="65" width="760" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="q1_prep" value="检查时间序列与数据完整性&lt;br&gt;对 T∞(t)、C∞(t) 作分段线性插值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+        <mxCell id="q1_prep" value="检查时间序列与数据完整性&lt;br&gt;对 T0(t)、C0(t) 作分段线性插值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
           <mxGeometry x="420" y="150" width="760" height="65" as="geometry" />
         </mxCell>
         <mxCell id="q1_init" value="T(r,0)=28 ℃，C(r,0)=2.55 kg/kg&lt;br&gt;温度均匀网格；水分表面加密网格" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
@@ -212,7 +212,7 @@
         <mxCell id="q1_next" value="进入当前时间步并更新环境边界" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#F7F8FA;strokeColor=#4E5969;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
           <mxGeometry x="500" y="325" width="600" height="52" as="geometry" />
         </mxCell>
-        <mxCell id="q1_t_env" value="读取当前 T∞(t)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+        <mxCell id="q1_t_env" value="读取当前 T0(t)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
           <mxGeometry x="205" y="465" width="510" height="60" as="geometry" />
         </mxCell>
         <mxCell id="q1_t_eq" value="建立圆柱径向导热&lt;br&gt;有限体积方程" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
@@ -227,7 +227,7 @@
         <mxCell id="q1_t_out" value="得到 T^(n+1)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFDF9;strokeColor=#F28C28;strokeWidth=2;fontSize=18;fontStyle=1;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
           <mxGeometry x="205" y="830" width="510" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="q1_c_env" value="读取当前 C∞(t)&lt;br&gt;以 Cⁿ 作为 Picard 初值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
+        <mxCell id="q1_c_env" value="读取当前 C0(t)&lt;br&gt;以 Cⁿ 作为 Picard 初值" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">
           <mxGeometry x="885" y="455" width="510" height="68" as="geometry" />
         </mxCell>
         <mxCell id="q1_c_coef" value="计算 D(C)&lt;br&gt;并更新界面传质系数" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFFFFF;strokeColor=#2F80ED;strokeWidth=2;fontSize=18;fontStyle=0;fontColor=#1F2937;fontFamily=Microsoft YaHei;spacing=4;" vertex="1" parent="1">

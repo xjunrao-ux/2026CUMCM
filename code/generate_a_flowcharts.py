@@ -7,6 +7,7 @@ CLI is unavailable.
 
 from __future__ import annotations
 
+import argparse
 import html
 import math
 import xml.etree.ElementTree as ET
@@ -137,7 +138,7 @@ def q1_diagram() -> Diagram:
     d.nodes += [
         n("q1_title", d.title, 200, 12, 1200, 42, kind="label", font_size=26, bold=True),
         n("q1_input", "附件1环境数据、附录2物性参数\n药材尺寸与初始状态", 420, 65, 760, 65, bold=True),
-        n("q1_prep", "检查时间序列与数据完整性\n对 T∞(t)、C∞(t) 作分段线性插值", 420, 150, 760, 65),
+        n("q1_prep", "检查时间序列与数据完整性\n对 T0(t)、C0(t) 作分段线性插值", 420, 150, 760, 65),
         n("q1_init", "T(r,0)=28 ℃，C(r,0)=2.55 kg/kg\n温度均匀网格；水分表面加密网格", 390, 235, 820, 72),
         n("q1_next", "进入当前时间步并更新环境边界", 500, 325, 600, 52, fill=GREY_FILL),
     ]
@@ -146,12 +147,12 @@ def q1_diagram() -> Diagram:
         c("q1_moist_group", "水分场求解", 840, 400, 600, 560, BLUE_FILL, BLUE_HEAD, BLUE),
     ]
     d.nodes += [
-        n("q1_t_env", "读取当前 T∞(t)", 205, 465, 510, 60, stroke=ORANGE),
+        n("q1_t_env", "读取当前 T0(t)", 205, 465, 510, 60, stroke=ORANGE),
         n("q1_t_eq", "建立圆柱径向导热\n有限体积方程", 205, 550, 510, 65, stroke=ORANGE),
         n("q1_t_disc", "后向 Euler：Δt=0.25 s\n均匀网格：Δr=0.025 cm", 205, 640, 510, 68, stroke=ORANGE),
         n("q1_t_solve", "Thomas 算法求解\n三对角方程组", 205, 735, 510, 65, stroke=ORANGE),
         n("q1_t_out", "得到 T^(n+1)", 205, 830, 510, 60, fill="#FFFDF9", stroke=ORANGE, bold=True),
-        n("q1_c_env", "读取当前 C∞(t)\n以 Cⁿ 作为 Picard 初值", 885, 455, 510, 68, stroke=BLUE),
+        n("q1_c_env", "读取当前 C0(t)\n以 Cⁿ 作为 Picard 初值", 885, 455, 510, 68, stroke=BLUE),
         n("q1_c_coef", "计算 D(C)\n并更新界面传质系数", 885, 542, 510, 65, stroke=BLUE),
         n("q1_c_eq", "建立非线性 Fick 扩散方程\n表面内外阻力串联", 885, 625, 510, 68, stroke=BLUE),
         n("q1_c_solve", "后向 Euler：Δt=0.125 s\nThomas 算法求解", 885, 710, 510, 68, stroke=BLUE),
@@ -194,7 +195,7 @@ def q2_diagram() -> Diagram:
     ]
     d.containers.append(c("q2_core", "联合 Picard 水热耦合迭代", 220, 335, 1160, 605, "#FBFCFE", "#E9EEF5", GREY_STROKE))
     d.nodes += [
-        n("q2_step", "读取当前 T∞(t)、C∞(t)\n令 T^0=T^n，C^0=C^n", 500, 400, 600, 68, fill=GREY_FILL),
+        n("q2_step", "读取当前 T0(t)、C0(t)\n令 T^0=T^n，C^0=C^n", 500, 400, 600, 68, fill=GREY_FILL),
         n("q2_heat_prop", "由 C^m 更新\nρ(C)、cp(C)、k(C)", 300, 510, 450, 75, fill=ORANGE_FILL, stroke=ORANGE),
         n("q2_heat_solve", "组装温度有限体积方程\nThomas 求 T^(m+1)", 850, 510, 450, 75, fill=ORANGE_FILL, stroke=ORANGE),
         n("q2_moist_prop", "由 T^(m+1)、C^m\n更新 D(T,C)", 300, 640, 450, 75, fill=BLUE_FILL, stroke=BLUE),
@@ -315,6 +316,98 @@ def q4_diagram() -> Diagram:
         e("q4_to_dry", (1090, 905), (1090, 950), (800, 950), (800, 974)),
         e("q4_not_dry", (549, 1019), (70, 1019), (70, 480), (154, 480), label="否", label_pos=(90, 990)),
         e("q4_dry_yes", (800, 1063), (800, 1089), label="是", label_pos=(818, 1067)),
+    ]
+    return d
+
+
+def combined_diagram() -> Diagram:
+    """Compact four-quadrant overview for the four questions."""
+    d = Diagram("A_four_questions_flowchart_v2", "A题四问建模与数值求解总流程")
+    d.nodes += [
+        n("all_title", d.title, 250, 8, 1100, 38, kind="label", font_size=24, bold=True),
+        n("all_note", "环境温度与环境水分统一记为 T0(t)、C0(t)", 450, 46, 700, 24, kind="label", font_size=18),
+    ]
+    d.containers += [
+        c("all_q1", "问题一｜固定物性、双场同步", 40, 78, 740, 510, ORANGE_FILL, ORANGE_HEAD, ORANGE),
+        c("all_q2", "问题二｜变物性、水热耦合", 820, 78, 740, 510, BLUE_FILL, BLUE_HEAD, BLUE),
+        c("all_q3", "问题三｜全程模拟、干燥判定", 40, 620, 740, 540, PURPLE_FILL, PURPLE_HEAD, PURPLE),
+        c("all_q4", "问题四｜半径收缩、移动网格", 820, 620, 740, 540, GREEN_FILL, GREEN_HEAD, GREEN),
+    ]
+
+    # Question 1: independent heat and moisture solvers sharing one time loop.
+    d.nodes += [
+        n("all_q1_data", "附件1、附录2\n插值得到 T0(t)、C0(t)", 90, 145, 640, 55, stroke=ORANGE),
+        n("all_q1_init", "初始化 T(r,0)、C(r,0)\n建立温度网格与水分表面加密网格", 90, 215, 640, 58, stroke=ORANGE),
+        n("all_q1_step", "更新当前环境边界", 190, 288, 440, 45, fill="#FFFFFF", stroke=ORANGE),
+        n("all_q1_heat", "温度场\n后向Euler + Thomas", 90, 355, 295, 65, fill="#FFFDF9", stroke=ORANGE, bold=True),
+        n("all_q1_moist", "水分场\nD(C) + Picard + Thomas", 435, 355, 295, 65, fill="#F7FBFF", stroke=BLUE, bold=True),
+        n("all_q1_end", "t = 1800 s？", 225, 445, 370, 70, kind="decision", fill="#FFFFFF", stroke=ORANGE),
+        n("all_q1_out", "插值采样 → 表1、表2与 result1.xlsx", 120, 532, 580, 42, fill="#FFFFFF", stroke=ORANGE, bold=True),
+    ]
+    d.edges += [
+        e("all_q1_e1", (410, 200), (410, 214), color=ORANGE),
+        e("all_q1_e2", (410, 273), (410, 287), color=ORANGE),
+        e("all_q1_split1", (409, 333), (409, 342), (237, 342), (237, 354), color=ORANGE),
+        e("all_q1_split2", (411, 333), (411, 342), (582, 342), (582, 354), color=BLUE),
+        e("all_q1_merge1", (237, 420), (237, 432), (410, 432), (410, 444), color=ORANGE),
+        e("all_q1_merge2", (582, 420), (582, 432), (410, 432), (410, 444), color=BLUE),
+        e("all_q1_loop", (224, 480), (58, 480), (58, 310), (189, 310), color=ORANGE, label="否", label_pos=(70, 458)),
+        e("all_q1_yes", (410, 515), (410, 531), color=ORANGE, label="是", label_pos=(424, 512)),
+    ]
+
+    # Question 2: one coupled Picard loop and one outer time loop.
+    d.nodes += [
+        n("all_q2_data", "附件1、附录3\n插值得到 T0(t)、C0(t)", 870, 145, 640, 55, stroke=BLUE),
+        n("all_q2_init", "固定半径表面加密网格\n初始化 T、C，时间步 Δt=0.5 s", 870, 215, 640, 58, stroke=BLUE),
+        n("all_q2_core", "读取当前 T0、C0 并进入 Picard 耦合\nC→ρ、cp、k→T；T、C→D(T,C)→C", 870, 293, 640, 72, fill="#FFFFFF", stroke=BLUE, bold=True),
+        n("all_q2_conv", "T、C同时收敛？", 990, 385, 400, 68, kind="decision", fill="#FFFFFF", stroke=BLUE),
+        n("all_q2_end", "t = 3 h？", 990, 470, 400, 68, kind="decision", fill="#FFFFFF", stroke=BLUE),
+        n("all_q2_out", "重构与采样 → 表3、表4与 result2.xlsx", 900, 544, 580, 34, fill="#FFFFFF", stroke=BLUE, bold=True),
+    ]
+    d.edges += [
+        e("all_q2_e1", (1190, 200), (1190, 214), color=BLUE),
+        e("all_q2_e2", (1190, 273), (1190, 292), color=BLUE),
+        e("all_q2_e3", (1190, 365), (1190, 384), color=BLUE),
+        e("all_q2_picard", (1391, 419), (1530, 419), (1530, 329), (1511, 329), color=BLUE, label="否", label_pos=(1462, 397)),
+        e("all_q2_conv_yes", (1190, 453), (1190, 469), color=BLUE, label="是", label_pos=(1204, 452)),
+        e("all_q2_time_loop", (989, 504), (840, 504), (840, 329), (869, 329), color=BLUE, label="否", label_pos=(852, 482)),
+        e("all_q2_yes", (1190, 538), (1190, 543), color=BLUE, label="是", label_pos=(1204, 531)),
+    ]
+
+    # Question 3: adaptive time stepping around the all-domain drying test.
+    d.nodes += [
+        n("all_q3_boundary", "0～4 h：附件1的 T0(t)、C0(t)\n4 h后：采用3～4 h时间加权平均值", 90, 690, 640, 58, stroke=PURPLE),
+        n("all_q3_init", "固定半径表面加密网格\n初始化温度场与水分场", 90, 765, 640, 55, stroke=PURPLE),
+        n("all_q3_step", "选择自适应时间步\n调用问题二的水热耦合求解器", 90, 840, 640, 62, fill="#FFFFFF", stroke=PURPLE, bold=True),
+        n("all_q3_reconstruct", "重构中心、内部节点与表面值\n计算全域最大水分 Cmax", 90, 920, 640, 58, stroke=PURPLE),
+        n("all_q3_dry", "Cmax < 0.15 kg/kg？", 225, 998, 370, 70, kind="decision", fill="#FFFFFF", stroke=PURPLE),
+        n("all_q3_out", "记录首次达标时刻 → 表5与 result3.xlsx", 120, 1090, 580, 45, fill="#FFFFFF", stroke=PURPLE, bold=True),
+    ]
+    d.edges += [
+        e("all_q3_e1", (410, 748), (410, 764), color=PURPLE),
+        e("all_q3_e2", (410, 820), (410, 839), color=PURPLE),
+        e("all_q3_e3", (410, 902), (410, 919), color=PURPLE),
+        e("all_q3_e4", (410, 978), (410, 997), color=PURPLE),
+        e("all_q3_loop", (224, 1033), (58, 1033), (58, 871), (89, 871), color=PURPLE, label="否", label_pos=(70, 1010)),
+        e("all_q3_yes", (410, 1068), (410, 1089), color=PURPLE, label="是", label_pos=(424, 1070)),
+    ]
+
+    # Question 4: moving geometry plus the same drying threshold.
+    d.nodes += [
+        n("all_q4_data", "附件1给出 T0(t)、C0(t)\n附件2插值得到动态半径 R(t)", 870, 690, 640, 58, stroke=GREEN),
+        n("all_q4_grid", "材料坐标 ξ=r/R(t)\n更新物理网格、控制体体积与表面阻力", 870, 765, 640, 62, stroke=GREEN),
+        n("all_q4_core", "按附录4更新物性\n在当前收缩网格上耦合求解 T、C", 870, 845, 640, 62, fill="#FFFFFF", stroke=GREEN, bold=True),
+        n("all_q4_reconstruct", "重构中心值与移动表面值\n计算全域最大水分 Cmax", 870, 925, 640, 58, stroke=GREEN),
+        n("all_q4_dry", "Cmax < 0.15 kg/kg？", 1005, 1003, 370, 70, kind="decision", fill="#FFFFFF", stroke=GREEN),
+        n("all_q4_out", "固定位置采样，域外留空 → 表6与 result4.xlsx", 900, 1090, 580, 45, fill="#FFFFFF", stroke=GREEN, bold=True),
+    ]
+    d.edges += [
+        e("all_q4_e1", (1190, 748), (1190, 764), color=GREEN),
+        e("all_q4_e2", (1190, 827), (1190, 844), color=GREEN),
+        e("all_q4_e3", (1190, 907), (1190, 924), color=GREEN),
+        e("all_q4_e4", (1190, 983), (1190, 1002), color=GREEN),
+        e("all_q4_loop", (1376, 1038), (1540, 1038), (1540, 796), (1511, 796), color=GREEN, label="否", label_pos=(1467, 1015)),
+        e("all_q4_yes", (1190, 1073), (1190, 1089), color=GREEN, label="是", label_pos=(1204, 1070)),
     ]
     return d
 
@@ -528,10 +621,21 @@ def render_png(diagram: Diagram, path: Path) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--combined-only",
+        action="store_true",
+        help="Generate only the compact four-quadrant overview.",
+    )
+    args = parser.parse_args()
     repo_root = Path(__file__).resolve().parents[1]
     drawio_dir = repo_root / "docs" / "flowcharts"
     png_dir = repo_root / "picture" / "A_flowcharts"
-    diagrams = [q1_diagram(), q2_diagram(), q3_diagram(), q4_diagram()]
+    diagrams = (
+        [combined_diagram()]
+        if args.combined_only
+        else [q1_diagram(), q2_diagram(), q3_diagram(), q4_diagram(), combined_diagram()]
+    )
     for diagram in diagrams:
         drawio_path = drawio_dir / f"{diagram.slug}.drawio"
         png_path = png_dir / f"{diagram.slug}.png"
