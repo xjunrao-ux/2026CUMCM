@@ -1,0 +1,3 @@
+﻿scenario,radius_rule,drying_time_s,drying_time_h,drying_time_d,endpoint_radius_cm,time_change_vs_fixed_h,time_change_vs_fixed_pct,speed_factor_vs_fixed
+constant_radius,R(t)=2 cm,467593,129.8869444,5.411956019,2,0,0,1
+shrinking_radius,Attachment 2 R(t),184022,51.11722222,2.129884259,1.2,-78.76972222,-60.64483429,2.540962494
