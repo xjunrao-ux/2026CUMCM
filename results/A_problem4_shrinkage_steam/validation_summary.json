@@ -1,0 +1,135 @@
+{
+  "model_scope": {
+    "geometry": "one-dimensional axisymmetric cylinder with moving radius",
+    "coordinate": "uniform material coordinate xi=r/R(t)",
+    "radius_interpolation": "piecewise linear Attachment 2 data; last value held only if needed",
+    "constitutive_laws": "Appendix 4 only: rho=760+90C; cp=1850+2150C/(C+1); k=0.12+0.20C/(C+1); D=4.2e-4*exp(-0.30/C)*exp(-3850/T)",
+    "temperature_state_unit": "K",
+    "latent_heat": "included once as the moving-surface sink L_v*j_w; no volumetric latent-heat source",
+    "drying_threshold_kg_kg": 0.15,
+    "environment_after_4h": "time-weighted mean over Attachment 1 final hour",
+    "result4_distance_rule": "fixed physical radii 0.0-2.0 cm every 0.1 cm plus the moving surface; a fixed-radius cell is blank when its radius exceeds R(t)",
+    "production_initial_nominal_step_cm": 0.00625,
+    "production_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "coarse_initial_nominal_step_cm": 0.0125,
+    "coarse_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "saved_interval_s": 60.0,
+    "surface_energy_balance": "h_T(T_inf-T_s)=k*dT/dr|R(t)+L_v*j_w",
+    "radius_interpolation_change": "none; the original piecewise-linear Attachment 2 algorithm is retained",
+    "surface_dry_bulk_density": "dynamic Appendix-4 rho_d,s=(760+90*C_s)/(1+C_s), updated in every Picard iteration",
+    "diffusivity_temperature_unit": "absolute temperature in kelvin for exp(-3850/T_K)"
+  },
+  "constant_boundary": {
+    "temperature_K": 323.1459166666666,
+    "temperature_C_for_reference": 49.99591666666663,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "radius": {
+    "attachment_interval_s": [
+      0.0,
+      259200.0
+    ],
+    "initial_cm": 2.0,
+    "drying_time_cm": 1.2,
+    "source_node_reconstruction_max_error_cm": 0.0,
+    "recorded_nonincreasing": true
+  },
+  "drying_time": {
+    "production_s": 203115.0,
+    "production_h": 56.420833333333334,
+    "coarse_s": 203119.0,
+    "coarse_h": 56.42194444444444,
+    "coarse_production_difference_s": 4.0,
+    "previous_time_s": 203114.0,
+    "previous_maximum_moisture": 0.1500002779980595,
+    "final_maximum_moisture": 0.14999976730246445,
+    "controlling_radius_cm": 0.0
+  },
+  "grid_refinement": {
+    "common_record_count": 3385,
+    "maximum_moisture_change_kg_kg": 0.00029847669009397393,
+    "mean_moisture_change_kg_kg": 7.119582952007769e-06
+  },
+  "discrete_moisture_balance": {
+    "summed_storage_change": -0.0016112553016423708,
+    "integrated_boundary_outflow": 0.0016112553016423756,
+    "residual": 4.7704895589362195e-18,
+    "relative_residual": 2.9607285413264994e-15
+  },
+  "physical_ranges": {
+    "temperature_min_K": 283.61882891550704,
+    "temperature_max_K": 323.00088832835803,
+    "moisture_min_kg_kg": 0.052595907757686994,
+    "moisture_max_kg_kg": 2.550000000000006,
+    "surface_moisture_min_kg_kg": 0.052595907757686994,
+    "diffusivity_min_m2_s": 9.33570209557385e-12,
+    "diffusivity_max_m2_s": 1.5777865838106842e-09,
+    "surface_temperature_min_K": 283.1658804382046,
+    "surface_temperature_max_K": 323.00088832835803,
+    "surface_temperature_min_C": 10.015880438204647,
+    "surface_temperature_max_C": 49.85088832835805,
+    "latent_heat_flux_min_W_m2": 3.6089412965258947,
+    "latent_heat_flux_max_W_m2": 1218.2953137377535,
+    "surface_dry_bulk_density_min_kg_m3": 313.79059601338287,
+    "surface_dry_bulk_density_max_kg_m3": 726.5215702075839
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "invalid_values_outside_current_radius": 0,
+    "missing_values_inside_current_radius": 0,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "maximum_picard_iterations": 10,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "constant_environment": 6164,
+      "threshold_refinement": 3795,
+      "crossing_recomputed": 0
+    }
+  },
+  "fixed_parameters": {
+    "heat_transfer_coefficient_W_m2_K": 25.0,
+    "mass_transfer_coefficient_m_s": 8e-07,
+    "initial_dry_bulk_density_kg_m3_for_reference": 278.7323943661972,
+    "latent_heat_correlation": "L_v=[2500.8-2.36*T_s(C)]*1000 J/kg"
+  },
+  "dynamic_surface_density": {
+    "formula": "rho_d,s=(760+90*C_s)/(1+C_s) kg/m3",
+    "initial_reference_kg_m3": 278.7323943661972,
+    "minimum_saved_surface_kg_m3": 313.79059601338287,
+    "maximum_saved_surface_kg_m3": 726.5215702075839,
+    "integrated_surface_water_outflow_kg_m": 0.8885758382051884,
+    "empirical_dry_mass_inventory_initial_kg_m": 0.3502654569833353,
+    "empirical_dry_mass_inventory_final_kg_m": 0.31183845997242815,
+    "empirical_inventory_relative_change": -0.1097082119997217,
+    "interpretation": "rho_d is the requested Appendix-4 local conversion in the latent flux; the normalized moving-grid Fick balance remains the governing moisture-conservation check."
+  },
+  "energy_balance_per_unit_length": {
+    "integrated_convective_input_J_m": 2167719.7130165426,
+    "integrated_latent_heat_J_m": 2154234.4029343077,
+    "integrated_conductive_heat_into_solid_J_m": 13485.31021005239,
+    "accumulated_sensible_energy_change_J_m": 13485.310063375477,
+    "surface_integrated_residual_J_m": -0.00012781750410795212,
+    "surface_integrated_relative_residual": 5.896403642059637e-11,
+    "storage_integrated_residual_J_m": -0.0001466769135731738,
+    "storage_integrated_relative_residual": 1.0876791952760275e-08,
+    "maximum_step_surface_residual_W_m2": 2.2124106635601493e-07,
+    "maximum_step_storage_residual_J_m": 5.512640166571714e-07
+  },
+  "comparison_with_original_no_latent_heat_model": {
+    "reference_drying_time_s": 184022.0,
+    "steam_model_drying_time_s": 203115.0,
+    "difference_s": 19093.0,
+    "difference_h": 5.3036111111111115,
+    "relative_change_pct": 10.375389899033816
+  }
+}

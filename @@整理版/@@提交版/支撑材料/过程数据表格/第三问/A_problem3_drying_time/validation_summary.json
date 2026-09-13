@@ -1,0 +1,79 @@
+{
+  "model_scope": {
+    "geometry": "fixed-radius one-dimensional axisymmetric cylinder",
+    "constitutive_laws": "Appendix 3 used over the full process",
+    "latent_heat": "excluded",
+    "shrinkage": "excluded in question 3",
+    "drying_threshold_kg_kg": 0.15,
+    "measured_boundary_interval_s": [
+      0,
+      14400
+    ],
+    "post_4h_boundary": "time-weighted mean over Attachment 1 final hour",
+    "production_nominal_radial_step_cm": 0.0125,
+    "production_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "coarse_nominal_radial_step_cm": 0.025,
+    "coarse_time_steps_s": [
+      2.0,
+      60.0,
+      2.0
+    ],
+    "saved_interval_s": 60.0
+  },
+  "constant_boundary": {
+    "temperature_C": 49.99591666666667,
+    "temperature_K": 323.14591666666666,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "drying_time": {
+    "production_s": 207017.0,
+    "production_h": 57.50472222222222,
+    "coarse_s": 207120.0,
+    "coarse_h": 57.53333333333333,
+    "coarse_production_difference_s": 103.0,
+    "controlling_radius_cm": 0.0,
+    "previous_time_s": 207016.0,
+    "previous_maximum_moisture": 0.15000015370009664,
+    "final_maximum_moisture": 0.1499998624678647,
+    "final_output_grid_maximum_moisture": 0.1499998624678647
+  },
+  "grid_refinement": {
+    "common_record_count": 3450,
+    "maximum_moisture_change_kg_kg": 0.0004730986251099134,
+    "mean_moisture_change_kg_kg": 0.00010251828566769784
+  },
+  "moisture_balance_per_unit_length": {
+    "stored_change_integral": -0.003048214883638341,
+    "integrated_boundary_outflow": 0.0030482148836493933,
+    "residual": 1.1052356946317232e-14,
+    "relative_residual": 3.625845738632801e-12
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "minimum_saved_moisture_kg_kg": 0.05264940272520494,
+    "maximum_picard_iterations": 11,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "constant_environment": 6199,
+      "threshold_refinement": 6647
+    }
+  },
+  "table5": {
+    "row_count": 10,
+    "last_time_h": 57.50472222222222,
+    "last_row": [
+      0.1499998624678647,
+      0.14768588388470316,
+      0.1402069890416283,
+      0.12491185492442627,
+      0.05264940272520494
+    ]
+  }
+}

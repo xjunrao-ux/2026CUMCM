@@ -1,0 +1,50 @@
+{
+  "drying_time": {
+    "regular_h": 57.50472222222222,
+    "latent_heat_h": 60.550555555555555,
+    "difference_h": 3.0458333333333343,
+    "relative_change_pct": 5.2966664573440845,
+    "controlling_radius_cm": 0.0
+  },
+  "temperature_effect": {
+    "latent_surface_min_C": 10.227997,
+    "latent_surface_min_time_h": 0.2833333333333333,
+    "maximum_cooling_difference_C": -24.4696,
+    "maximum_cooling_time_h": 0.8,
+    "maximum_cooling_radius_cm": 2.0
+  },
+  "moisture_effect": {
+    "maximum_absolute_difference_kg_kg": 0.5301986699999999,
+    "maximum_absolute_difference_time_h": 3.466666666666667,
+    "maximum_absolute_difference_radius_cm": 0.0,
+    "center_difference_at_6h_kg_kg": 0.4078548599999998,
+    "delta_range_kg_kg": [
+      -0.33010491,
+      0.5301986699999999
+    ]
+  },
+  "energy": {
+    "integrated_convective_input_J_m": 2083364.473123383,
+    "integrated_latent_heat_J_m": 2031921.529623671,
+    "integrated_sensible_heat_J_m": 51442.94351224278,
+    "latent_share_pct": 97.53077561975563,
+    "sensible_share_pct": 2.469224380845827,
+    "peak_latent_heat_flux_W_m2": 1227.83338,
+    "peak_latent_heat_flux_time_h": 0.016666666666666666,
+    "conductive_cooling_interval_h": [
+      0.016666666666666666,
+      0.43333333333333335
+    ],
+    "relative_surface_energy_residual": 6.014652055586581e-12
+  },
+  "data_integrity": {
+    "regular_saved_rows": 3451,
+    "latent_saved_rows": 3634,
+    "common_60s_rows_plus_initial": 3451,
+    "radial_positions": 21,
+    "excluded_observations": 0,
+    "difference_grid_rule": "exact inner join on shared time_s values; no interpolation or smoothing",
+    "regular_moisture_decimal_places": 4,
+    "latent_moisture_decimal_places": 8
+  }
+}

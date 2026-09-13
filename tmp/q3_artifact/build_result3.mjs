@@ -1,0 +1,91 @@
+import fs from "node:fs/promises";
+import { FileBlob, SpreadsheetFile } from "@oai/artifact-tool";
+
+const root = "D:/Users/Xenop/Documents/Github/2026CUMCM";
+const templatePath = `${root}/比赛题目/CUMCM2026Problems/A题/附件/附件3/result3.xlsx`;
+const resultDir = `${root}/results/A_problem3_drying_time`;
+const outputPath = `${resultDir}/result3.xlsx`;
+
+function parseNumericCsv(text) {
+  const lines = text.replace(/^\uFEFF/, "").trim().split(/\r?\n/);
+  const rows = lines.slice(1).map((line) => line.split(",").map(Number));
+  if (rows.length < 2 || rows.some((row) => row.length !== 22)) {
+    throw new Error("Expected at least two data rows and 22 columns.");
+  }
+  for (let index = 0; index < rows.length - 1; index += 1) {
+    if (rows[index][0] !== 60 * (index + 1)) {
+      throw new Error(`Unexpected 60 s time sequence at row ${index + 2}.`);
+    }
+  }
+  if (rows.at(-1)[0] <= rows.at(-2)[0]) {
+    throw new Error("The final drying-time row must be later than the preceding row.");
+  }
+  return rows;
+}
+
+const rows = parseNumericCsv(
+  await fs.readFile(`${resultDir}/moisture_full_60s_0p1cm.csv`, "utf8"),
+);
+const radii = Array.from({ length: 21 }, (_, index) => Number((index / 10).toFixed(1)));
+const lastWorksheetRow = rows.length + 1;
+
+const workbook = await SpreadsheetFile.importXlsx(await FileBlob.load(templatePath));
+const sheet = workbook.worksheets.getItem("Sheet1");
+sheet.getRange(`A1:V${lastWorksheetRow}`).values = [
+  ["时间\\到药材中心的距离", ...radii],
+  ...rows,
+];
+sheet.getRange(`A2:A${lastWorksheetRow}`).format.numberFormat = "0";
+sheet.getRange(`B2:V${lastWorksheetRow}`).format.numberFormat = "0.0000";
+sheet.getRange("A1:V1").format.font = { bold: true };
+sheet.getRange("A1:V1").format.horizontalAlignment = "center";
+sheet.getRange("A1:V1").format.verticalAlignment = "center";
+sheet.getRange(`A2:V${lastWorksheetRow}`).format.horizontalAlignment = "right";
+sheet.getRange("A:A").format.columnWidth = 24;
+sheet.getRange("B:V").format.columnWidth = 11;
+sheet.getRange("1:1").format.rowHeight = 24;
+sheet.freezePanes.freezeRows(1);
+sheet.freezePanes.freezeColumns(1);
+
+const output = await SpreadsheetFile.exportXlsx(workbook);
+await output.save(outputPath);
+
+const saved = await SpreadsheetFile.importXlsx(await FileBlob.load(outputPath));
+console.log((await saved.inspect({
+  kind: "sheet,table,formula",
+  maxChars: 5000,
+  tableMaxRows: 5,
+  tableMaxCols: 22,
+})).ndjson);
+console.log((await saved.inspect({
+  kind: "table",
+  sheetId: "Sheet1",
+  range: `A${lastWorksheetRow - 1}:V${lastWorksheetRow}`,
+  maxChars: 5000,
+  tableMaxRows: 2,
+  tableMaxCols: 22,
+})).ndjson);
+console.log((await saved.inspect({
+  kind: "match",
+  searchTerm: "#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!|#SPILL!|#CALC!",
+  options: { useRegex: true, maxResults: 100 },
+  summary: "final formula error scan",
+})).ndjson);
+
+for (const [label, range] of [
+  ["top", "A1:V8"],
+  ["bottom", `A${lastWorksheetRow - 7}:V${lastWorksheetRow}`],
+]) {
+  const preview = await saved.render({
+  sheetName: "Sheet1",
+    range,
+    scale: 1.25,
+    format: "png",
+  });
+  await fs.writeFile(
+    `水分浓度_${label}_check.png`,
+    new Uint8Array(await preview.arrayBuffer()),
+  );
+}
+
+console.log(outputPath);

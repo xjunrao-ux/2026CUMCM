@@ -1,0 +1,43 @@
+=== result1.xlsx ===
+  sheet: '温度', max_row=5, max_col=6
+  row1: ['时间\\到药材中心的距离', 0, 0.1, 0.2, '…', 2]
+  row2: [1, None, None, None, None, None]
+  row3: [2, None, None, None, None, None]
+  row4: [3, None, None, None, None, None]
+  row5: ['…', None, None, None, None, None]
+  sheet: '水分浓度', max_row=5, max_col=6
+  row1: ['时间\\到药材中心的距离', 0, 0.1, 0.2, '…', 2]
+  row2: [1, None, None, None, None, None]
+  row3: [2, None, None, None, None, None]
+  row4: [3, None, None, None, None, None]
+  row5: ['…', None, None, None, None, None]
+
+=== result2.xlsx ===
+  sheet: '温度', max_row=5, max_col=6
+  row1: ['时间\\到药材中心的距离', 0, 0.1, 0.2, '…', 2]
+  row2: [1, None, None, None, None, None]
+  row3: [2, None, None, None, None, None]
+  row4: [3, None, None, None, None, None]
+  row5: ['…', None, None, None, None, None]
+  sheet: '水分浓度', max_row=5, max_col=6
+  row1: ['时间\\到药材中心的距离', 0, 0.1, 0.2, '…', 2]
+  row2: [1, None, None, None, None, None]
+  row3: [2, None, None, None, None, None]
+  row4: [3, None, None, None, None, None]
+  row5: ['…', None, None, None, None, None]
+
+=== result3.xlsx ===
+  sheet: 'Sheet1', max_row=5, max_col=6
+  row1: ['时间\\到药材中心的距离', 0, 0.1, 0.2, '…', 2]
+  row2: [60, None, None, None, None, None]
+  row3: [120, None, None, None, None, None]
+  row4: [180, None, None, None, None, None]
+  row5: ['…', None, None, None, None, None]
+
+=== result4.xlsx ===
+  sheet: 'Sheet1', max_row=5, max_col=6
+  row1: ['时间\\到药材中心的距离', 0, 0.1, 0.2, '…', '药材表面']
+  row2: [60, None, None, None, None, None]
+  row3: [120, None, None, None, None, None]
+  row4: [180, None, None, None, None, None]
+  row5: ['…', None, None, None, None, None]

@@ -1,0 +1,63 @@
+{
+  "model_scope": {
+    "geometry": "fixed finite cylinder, axisymmetric 2D half-length domain",
+    "radius_m": 0.02,
+    "length_m": 0.25,
+    "end_faces": "both fully exposed; half-domain uses midplane symmetry",
+    "side_heat_transfer_w_m2_k": 25.0,
+    "end_heat_transfer_w_m2_k": 25.0,
+    "side_mass_transfer_m_s": 8e-07,
+    "end_mass_transfer_m_s": 8e-07,
+    "latent_heat": "excluded",
+    "shrinkage": "excluded in question 3",
+    "drying_threshold_kg_kg": 0.15,
+    "official_radial_output": "midplane z=0, the conservative cross-section"
+  },
+  "constant_boundary": {
+    "temperature_c": 49.99591666666667,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "production": {
+    "nr": 40,
+    "nz_half_length": 25,
+    "cell_count": 1000,
+    "drying_time_s": 207712.0,
+    "drying_time_h": 57.69777777777778,
+    "previous_time_s": 207710.0,
+    "previous_maximum_moisture": 0.15000050290566036,
+    "final_maximum_moisture": 0.14999992073924973,
+    "controlling_radius_cm": 0.0,
+    "controlling_axial_distance_from_midplane_cm": 0.0,
+    "controlling_location": "center",
+    "maximum_picard_iterations": 19,
+    "time_step_counts": {
+      "measured_environment": 240,
+      "constant_environment": 805,
+      "threshold_refinement": 56
+    },
+    "runtime_s": 120.81023450000794
+  },
+  "comparison_with_1d": {
+    "one_dimensional_drying_time_s": 207017.0,
+    "one_dimensional_drying_time_h": 57.50472222222222,
+    "time_reduction_s": -695.0,
+    "time_reduction_h": -0.19305555555555556,
+    "time_reduction_percent": -0.33572122096252965
+  },
+  "half_domain_moisture_balance": {
+    "storage_change": -0.0003814846933253184,
+    "integrated_side_outflow": 0.00036129679508780125,
+    "integrated_end_outflow": 2.0187898237507908e-05,
+    "side_outflow_fraction": 0.9470807123045099,
+    "end_outflow_fraction": 0.05291928769549015,
+    "residual": -9.242823520438925e-18,
+    "relative_residual": 2.422855669482112e-14
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "controlling_point_is_midplane_axis": true,
+    "saved_midplane_time_monotonicity_violation_count": 0,
+    "minimum_saved_moisture": 0.052647857418271334
+  }
+}

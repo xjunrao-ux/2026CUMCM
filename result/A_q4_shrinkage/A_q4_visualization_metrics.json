@@ -1,0 +1,43 @@
+{
+  "source": {
+    "time_records_including_initial": 3069,
+    "fixed_distance_nodes": 21,
+    "fixed_distance_spacing_cm": 0.09999999999999999,
+    "visualization_interpolation": "piecewise linear within each current radius; exact moving-surface value included; outside domain remains masked"
+  },
+  "drying_time_h": 51.117222222222225,
+  "radius": {
+    "initial_cm": 2.0,
+    "final_cm": 1.2,
+    "linear_shrinkage_percent": 40.0,
+    "cross_section_area_reduction_percent": 64.0,
+    "final_radius_first_reached_h": 35.0
+  },
+  "maximum_center_surface_difference": {
+    "temperature_C": 5.065400000000011,
+    "temperature_time_h": 0.6833333333333333,
+    "moisture_kg_kg": 1.7747000000000002,
+    "moisture_time_h": 2.75
+  },
+  "final_state": {
+    "centre_temperature_C": 49.995900000000006,
+    "surface_temperature_C": 49.995900000000006,
+    "centre_moisture_kg_kg": 0.15,
+    "surface_moisture_kg_kg": 0.0526
+  },
+  "data_integrity": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "invalid_values_outside_current_radius": 0,
+    "missing_values_inside_current_radius": 0,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "maximum_picard_iterations": 8,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "constant_environment": 5528,
+      "threshold_refinement": 3782,
+      "crossing_recomputed": 0
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "method": "piecewise linear interpolation (numpy.interp)",
+  "time_range_s": [
+    0.0,
+    1800.0
+  ],
+  "source_observation_count": 31,
+  "output_record_count": 1801,
+  "output_interval_s": 1.0,
+  "temperature_unit": "degC",
+  "moisture_unit": "kg/kg"
+}

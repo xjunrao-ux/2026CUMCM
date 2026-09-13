@@ -1,0 +1,21 @@
+{
+  "method": "full fine-grid rerun: radial spacing 0.0125 cm; time steps 1/30/1 s",
+  "cases": [
+    {
+      "label": "minimum-time corner",
+      "plateau_temperature_C": 53.9959166667,
+      "plateau_moisture_kg_kg": 0.0349932917,
+      "corrected_sweep_prediction_h": 50.5602777778,
+      "fine_grid_result_h": 50.5597222222,
+      "absolute_error_s": 2.0
+    },
+    {
+      "label": "maximum-time corner",
+      "plateau_temperature_C": 45.9959166667,
+      "plateau_moisture_kg_kg": 0.0649875417,
+      "corrected_sweep_prediction_h": 65.9152777778,
+      "fine_grid_result_h": 65.9147222222,
+      "absolute_error_s": 2.0
+    }
+  ]
+}

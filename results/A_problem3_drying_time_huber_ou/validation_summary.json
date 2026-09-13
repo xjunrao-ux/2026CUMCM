@@ -1,0 +1,155 @@
+{
+  "model_scope": {
+    "geometry": "fixed-radius one-dimensional axisymmetric cylinder",
+    "constitutive_laws": "Appendix 3 used over the full process",
+    "latent_heat": "excluded",
+    "shrinkage": "excluded in question 3",
+    "drying_threshold_kg_kg": 0.15,
+    "measured_boundary_interval_s": [
+      0,
+      14400
+    ],
+    "post_4h_boundary": "Huber-calibrated exact-discrete joint OU path at 60 s intervals",
+    "production_nominal_radial_step_cm": 0.0125,
+    "production_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "coarse_nominal_radial_step_cm": 0.025,
+    "coarse_time_steps_s": [
+      2.0,
+      60.0,
+      2.0
+    ],
+    "saved_interval_s": 60.0,
+    "ou_path_interval_s": 60.0,
+    "ou_path_end_time_h": 72.0,
+    "random_seed": 20260912,
+    "sigma_multiplier": 1.0
+  },
+  "drying_time": {
+    "production_s": 206986.0,
+    "production_h": 57.49611111111111,
+    "coarse_s": 207090.0,
+    "coarse_h": 57.525,
+    "coarse_production_difference_s": 104.0,
+    "controlling_radius_cm": 0.0,
+    "previous_time_s": 206985.0,
+    "previous_maximum_moisture": 0.1500000521657463,
+    "final_maximum_moisture": 0.14999976103523932,
+    "final_output_grid_maximum_moisture": 0.14999976103523932
+  },
+  "grid_refinement": {
+    "common_record_count": 3449,
+    "maximum_moisture_change_kg_kg": 0.00047454608200481196,
+    "mean_moisture_change_kg_kg": 0.00010273753359346325
+  },
+  "moisture_balance_per_unit_length": {
+    "stored_change_integral": -0.003048215397250919,
+    "integrated_boundary_outflow": 0.0030482153972501134,
+    "residual": -8.057790545912269e-16,
+    "relative_residual": 2.643445260849779e-13
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "radial_order_violation_count": 0,
+    "minimum_saved_moisture_kg_kg": 0.052394340880115735,
+    "maximum_picard_iterations": 13,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "threshold_refinement": 6646,
+      "ou_environment": 6198
+    },
+    "saved_pointwise_moisture_increase_count": 1077,
+    "maximum_saved_pointwise_increase_kg_kg": 0.000555828923563019,
+    "pointwise_monotonicity_note": "Small local increases are admissible under a stochastic ambient-moisture boundary and are not treated as numerical monotonicity violations."
+  },
+  "table5": {
+    "row_count": 10,
+    "last_time_h": 57.49611111111111,
+    "last_row": [
+      0.14999976103523932,
+      0.14768579238831503,
+      0.14020691942528318,
+      0.12491179080230025,
+      0.05253533761926907
+    ]
+  },
+  "ou_equilibrium": {
+    "temperature_C": 49.998934426229496,
+    "temperature_K": 323.14893442622946,
+    "moisture_kg_kg": 0.0499870026501955
+  },
+  "ou_calibration": {
+    "fit_interval_s": [
+      10800.0,
+      14400.0
+    ],
+    "temperature": {
+      "variable": "oven_temperature",
+      "unit": "degC",
+      "sample_count": 61,
+      "transition_count": 60,
+      "sampling_interval_s": 60.0,
+      "huber_c": 1.345,
+      "equilibrium_mean": 49.998934426229496,
+      "discrete_phi": 1e-06,
+      "kappa_per_s": 0.23025850929940456,
+      "relaxation_time_s": 4.342944819032518,
+      "half_life_s": 3.010299956639812,
+      "innovation_scale": 0.18068296382009866,
+      "stationary_scale": 0.180682963820189,
+      "ordinary_mean": 49.998934426229496,
+      "ordinary_standard_deviation": 0.15435336826607313,
+      "ordinary_lag1_correlation": -0.03221061673236021,
+      "phi_at_lower_bound": true
+    },
+    "moisture": {
+      "variable": "oven_moisture_concentration",
+      "unit": "kg/kg",
+      "sample_count": 61,
+      "transition_count": 60,
+      "sampling_interval_s": 60.0,
+      "huber_c": 1.345,
+      "equilibrium_mean": 0.0499870026501955,
+      "discrete_phi": 0.03738801450969816,
+      "kappa_per_s": 0.05477341822629187,
+      "relaxation_time_s": 18.25703109980433,
+      "half_life_s": 12.654809632224609,
+      "innovation_scale": 0.00017337470237030025,
+      "stationary_scale": 0.0001734960066555755,
+      "ordinary_mean": 0.049987540983606554,
+      "ordinary_standard_deviation": 0.00015012945233702923,
+      "ordinary_lag1_correlation": 0.03509578950142417,
+      "phi_at_lower_bound": false
+    },
+    "robust_innovation_correlation": -0.11959465362188985,
+    "interpretation": "phi at its lower bound means correlation decays below the one-minute observation resolution; the discrete path is then practically white noise around the Huber equilibrium."
+  },
+  "realized_ou_boundary_4h_72h": {
+    "temperature_c": {
+      "mean": 49.99864164412452,
+      "standard_deviation": 0.1794211324776591,
+      "minimum": 49.33455623200553,
+      "maximum": 50.79411764024998,
+      "lag1_correlation": 0.0040453935451154905
+    },
+    "moisture_kg_kg": {
+      "mean": 0.049981521007575754,
+      "standard_deviation": 0.0001715820367079508,
+      "minimum": 0.04940393632742187,
+      "maximum": 0.05060362221141349,
+      "lag1_correlation": 0.02130777186061668
+    }
+  },
+  "comparison_with_constant_mean_model": {
+    "source": "C:\\Users\\user\\Documents\\GitHub\\2026CUMCM\\results\\A_problem3_drying_time\\validation_summary.json",
+    "drying_time_s": 207017.0,
+    "drying_time_h": 57.50472222222222,
+    "delta_ou_minus_mean_s": -31.0,
+    "delta_ou_minus_mean_min": -0.5166666666666667,
+    "relative_change_pct": -0.014974615611274
+  }
+}

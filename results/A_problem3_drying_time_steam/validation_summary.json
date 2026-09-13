@@ -1,0 +1,124 @@
+{
+  "model_scope": {
+    "geometry": "fixed-radius one-dimensional axisymmetric cylinder",
+    "constitutive_laws": "Appendix 3 used over the full process",
+    "latent_heat": "included once as the surface sink L_v*j_w; no volumetric latent-heat source",
+    "shrinkage": "excluded in question 3",
+    "drying_threshold_kg_kg": 0.15,
+    "measured_boundary_interval_s": [
+      0,
+      14400
+    ],
+    "post_4h_boundary": "time-weighted mean over Attachment 1 final hour",
+    "production_nominal_radial_step_cm": 0.0125,
+    "production_time_steps_s": [
+      1.0,
+      30.0,
+      1.0
+    ],
+    "coarse_nominal_radial_step_cm": 0.025,
+    "coarse_time_steps_s": [
+      2.0,
+      60.0,
+      2.0
+    ],
+    "saved_interval_s": 60.0,
+    "surface_energy_balance": "h_T(T_inf-T_s)=k*dT/dr|R+L_v*j_w",
+    "surface_dry_bulk_density": "constant rho_d=m_d/V because both dry mass and the fixed question-3 cylinder volume are conserved"
+  },
+  "constant_boundary": {
+    "temperature_C": 49.99591666666667,
+    "temperature_K": 323.14591666666666,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "drying_time": {
+    "production_s": 217982.0,
+    "production_h": 60.550555555555555,
+    "coarse_s": 218086.0,
+    "coarse_h": 60.57944444444445,
+    "coarse_production_difference_s": 104.0,
+    "controlling_radius_cm": 0.0,
+    "previous_time_s": 217981.0,
+    "previous_maximum_moisture": 0.15000024171139448,
+    "final_maximum_moisture": 0.149999951077394,
+    "final_output_grid_maximum_moisture": 0.149999951077394
+  },
+  "grid_refinement": {
+    "common_record_count": 3633,
+    "maximum_moisture_change_kg_kg": 0.0005295313778328481,
+    "mean_moisture_change_kg_kg": 0.0001108789008091161
+  },
+  "moisture_balance_per_unit_length": {
+    "stored_change_integral": -0.0030482150116845196,
+    "integrated_boundary_outflow": 0.00304821501168422,
+    "residual": -2.9967348047499343e-16,
+    "relative_residual": 9.831113596851764e-14
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "radial_order_violation_count": 0,
+    "time_monotonicity_violation_count": 0,
+    "minimum_saved_moisture_kg_kg": 0.05264390439081817,
+    "maximum_picard_iterations": 11,
+    "time_step_counts": {
+      "measured_environment": 14400,
+      "constant_environment": 6564,
+      "threshold_refinement": 6662
+    }
+  },
+  "table5": {
+    "row_count": 11,
+    "last_time_h": 60.550555555555555,
+    "last_row": [
+      0.149999951077394,
+      0.1476859468618189,
+      0.14020698162270057,
+      0.12491175121713011,
+      0.05264390439081817
+    ]
+  },
+  "fixed_parameters": {
+    "heat_transfer_coefficient_W_m2_K": 25.0,
+    "mass_transfer_coefficient_m_s": 8e-07,
+    "dry_bulk_density_kg_m3": 275.0422535211268,
+    "dry_bulk_density_derivation": "rho_d=rho(C0)/(1+C0), C0=2.55 kg/kg; fixed in question 3",
+    "latent_heat_correlation": "L_v=[2500.8-2.36*T_s(C)]*1000 J/kg"
+  },
+  "water_mass_balance_per_unit_length": {
+    "constant_dry_bulk_density_kg_m3": 275.0422535211268,
+    "stored_water_change_kg_m": -0.838387926030638,
+    "integrated_surface_outflow_kg_m": 0.8383879260305442,
+    "residual_kg_m": -9.381384558082573e-14,
+    "relative_residual": 1.118978967469021e-13,
+    "dry_mass_interpretation": "Question 3 fixes cylinder volume; constant dry mass therefore implies constant dry-bulk density."
+  },
+  "energy_balance_per_unit_length": {
+    "integrated_convective_input_J_m": 2083364.473123383,
+    "integrated_latent_heat_J_m": 2031921.529623671,
+    "integrated_conductive_heat_into_solid_J_m": 51442.94351224278,
+    "accumulated_sensible_energy_change_J_m": 51442.94349951051,
+    "surface_integrated_residual_J_m": -1.253071241080761e-05,
+    "surface_integrated_relative_residual": 6.014652055586581e-12,
+    "storage_integrated_residual_J_m": -1.2732270988635719e-05,
+    "storage_integrated_relative_residual": 2.475027694635241e-10,
+    "maximum_step_surface_residual_W_m2": 9.37967570280307e-09,
+    "maximum_step_storage_residual_J_m": 4.862116043113929e-08
+  },
+  "thermal_ranges": {
+    "minimum_saved_internal_temperature_C": 10.227997412139771,
+    "maximum_saved_internal_temperature_C": 49.940031661378235,
+    "minimum_saved_surface_temperature_C": 10.227997412139771,
+    "maximum_saved_surface_temperature_C": 49.940031661378235,
+    "minimum_latent_heat_flux_W_m2": 1.391297077431029,
+    "maximum_latent_heat_flux_W_m2": 1227.8333797013565,
+    "surface_dry_bulk_density_kg_m3": 275.0422535211268
+  },
+  "comparison_with_original_no_latent_heat_model": {
+    "reference_drying_time_s": 207017.0,
+    "steam_model_drying_time_s": 217982.0,
+    "difference_s": 10965.0,
+    "difference_h": 3.0458333333333334,
+    "relative_change_pct": 5.296666457344079
+  }
+}

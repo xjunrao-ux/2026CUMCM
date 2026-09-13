@@ -1,0 +1,234 @@
+{
+  "method": {
+    "type": "one-at-a-time local sensitivity analysis",
+    "factors": [
+      0.8,
+      0.9,
+      1.0,
+      1.1,
+      1.2
+    ],
+    "local_elasticity_factors": [
+      0.9,
+      1.1
+    ],
+    "spatial_discretization": "80 surface-refined finite volumes",
+    "time_step_s": 1.0,
+    "trajectory_output_interval_s": 60.0,
+    "note": "The ±20% range is a diagnostic perturbation, not a confidence interval."
+  },
+  "parameters": {
+    "h": {
+      "label": "换热系数 h",
+      "short": "h",
+      "baseline": 25.0,
+      "unit": "W/(m²·K)"
+    },
+    "km": {
+      "label": "传质系数 km",
+      "short": "km",
+      "baseline": 8e-07,
+      "unit": "m/s"
+    },
+    "lambda": {
+      "label": "导热系数 λ",
+      "short": "λ",
+      "baseline": 1.0,
+      "unit": "基准倍率"
+    },
+    "D": {
+      "label": "扩散系数 D",
+      "short": "D",
+      "baseline": 1.0,
+      "unit": "基准倍率"
+    }
+  },
+  "baseline_metrics": {
+    "average_temperature_c": 49.904243423897185,
+    "average_moisture_kg_kg": 1.3825881739238934,
+    "center_temperature_c": 49.84939975953345,
+    "surface_temperature_c": 49.96637597929669,
+    "center_moisture_kg_kg": 1.766285490902392,
+    "surface_moisture_kg_kg": 1.0081183273326477,
+    "heating_gain_c": 21.904243423897185,
+    "water_removed_kg_kg": 1.1674118260761064,
+    "temperature_gradient_c": 0.11697621976324513,
+    "moisture_gradient_kg_kg": 0.7581671635697442,
+    "maximum_picard_iterations": 4.0
+  },
+  "elasticities": {
+    "h": {
+      "heating_gain_c": 0.01715370668197761,
+      "water_removed_kg_kg": 0.017325482251111864,
+      "temperature_gradient_c": -0.766659197000289,
+      "moisture_gradient_kg_kg": -0.04407173472378705
+    },
+    "km": {
+      "heating_gain_c": 0.002310498865740372,
+      "water_removed_kg_kg": 0.49566091948601115,
+      "temperature_gradient_c": -0.0829498576187187,
+      "moisture_gradient_kg_kg": 0.44969195465235834
+    },
+    "lambda": {
+      "heating_gain_c": 0.00556113918672501,
+      "water_removed_kg_kg": 0.0027435773228999425,
+      "temperature_gradient_c": -1.1470560658232274,
+      "moisture_gradient_kg_kg": -0.013420415488351382
+    },
+    "D": {
+      "heating_gain_c": 0.0010594363825923128,
+      "water_removed_kg_kg": 0.1725163180842375,
+      "temperature_gradient_c": -0.10651198515729993,
+      "moisture_gradient_kg_kg": -0.9108390471753229
+    }
+  },
+  "absolute_elasticity_ranking": {
+    "heating_gain_c": [
+      {
+        "parameter": "h",
+        "elasticity": 0.01715370668197761,
+        "absolute_elasticity": 0.01715370668197761
+      },
+      {
+        "parameter": "lambda",
+        "elasticity": 0.00556113918672501,
+        "absolute_elasticity": 0.00556113918672501
+      },
+      {
+        "parameter": "km",
+        "elasticity": 0.002310498865740372,
+        "absolute_elasticity": 0.002310498865740372
+      },
+      {
+        "parameter": "D",
+        "elasticity": 0.0010594363825923128,
+        "absolute_elasticity": 0.0010594363825923128
+      }
+    ],
+    "water_removed_kg_kg": [
+      {
+        "parameter": "km",
+        "elasticity": 0.49566091948601115,
+        "absolute_elasticity": 0.49566091948601115
+      },
+      {
+        "parameter": "D",
+        "elasticity": 0.1725163180842375,
+        "absolute_elasticity": 0.1725163180842375
+      },
+      {
+        "parameter": "h",
+        "elasticity": 0.017325482251111864,
+        "absolute_elasticity": 0.017325482251111864
+      },
+      {
+        "parameter": "lambda",
+        "elasticity": 0.0027435773228999425,
+        "absolute_elasticity": 0.0027435773228999425
+      }
+    ],
+    "temperature_gradient_c": [
+      {
+        "parameter": "lambda",
+        "elasticity": -1.1470560658232274,
+        "absolute_elasticity": 1.1470560658232274
+      },
+      {
+        "parameter": "h",
+        "elasticity": -0.766659197000289,
+        "absolute_elasticity": 0.766659197000289
+      },
+      {
+        "parameter": "D",
+        "elasticity": -0.10651198515729993,
+        "absolute_elasticity": 0.10651198515729993
+      },
+      {
+        "parameter": "km",
+        "elasticity": -0.0829498576187187,
+        "absolute_elasticity": 0.0829498576187187
+      }
+    ],
+    "moisture_gradient_kg_kg": [
+      {
+        "parameter": "D",
+        "elasticity": -0.9108390471753229,
+        "absolute_elasticity": 0.9108390471753229
+      },
+      {
+        "parameter": "km",
+        "elasticity": 0.44969195465235834,
+        "absolute_elasticity": 0.44969195465235834
+      },
+      {
+        "parameter": "h",
+        "elasticity": -0.04407173472378705,
+        "absolute_elasticity": 0.04407173472378705
+      },
+      {
+        "parameter": "lambda",
+        "elasticity": -0.013420415488351382,
+        "absolute_elasticity": 0.013420415488351382
+      }
+    ]
+  },
+  "relative_changes_at_20_percent": {
+    "h": {
+      "factor_0.8": {
+        "heating_gain_c": -0.521437783492007,
+        "water_removed_kg_kg": -0.4247836821162587,
+        "temperature_gradient_c": 24.040476441098036,
+        "moisture_gradient_kg_kg": 1.1706931517680985
+      },
+      "factor_1.2": {
+        "heating_gain_c": 0.23489336477897638,
+        "water_removed_kg_kg": 0.28754779238431283,
+        "temperature_gradient_c": -9.549476724875362,
+        "moisture_gradient_kg_kg": -0.6822812256371491
+      }
+    },
+    "km": {
+      "factor_0.8": {
+        "heating_gain_c": -0.051888063843674725,
+        "water_removed_kg_kg": -11.153492927305974,
+        "temperature_gradient_c": 1.9535907871287117,
+        "moisture_gradient_kg_kg": -10.210516017237747
+      },
+      "factor_1.2": {
+        "heating_gain_c": 0.04127394331769896,
+        "water_removed_kg_kg": 8.833546618500865,
+        "temperature_gradient_c": -1.4103358962343826,
+        "moisture_gradient_kg_kg": 7.958731701522637
+      }
+    },
+    "lambda": {
+      "factor_0.8": {
+        "heating_gain_c": -0.14956434401729446,
+        "water_removed_kg_kg": -0.06779565417284195,
+        "temperature_gradient_c": 31.013037541385422,
+        "moisture_gradient_kg_kg": 0.3444082390990033
+      },
+      "factor_1.2": {
+        "heating_gain_c": 0.08549965158135553,
+        "water_removed_kg_kg": 0.045304136105084325,
+        "temperature_gradient_c": -17.748541439246658,
+        "moisture_gradient_kg_kg": -0.21473579327340175
+      }
+    },
+    "D": {
+      "factor_0.8": {
+        "heating_gain_c": -0.024351297361613344,
+        "water_removed_kg_kg": -3.9927786333486703,
+        "temperature_gradient_c": 2.472661253077435,
+        "moisture_gradient_kg_kg": 21.476171362297336
+      },
+      "factor_1.2": {
+        "heating_gain_c": 0.018596039316931545,
+        "water_removed_kg_kg": 3.011244249496725,
+        "temperature_gradient_c": -1.8495692731179347,
+        "moisture_gradient_kg_kg": -15.553069371420303
+      }
+    }
+  },
+  "total_runtime_s": 313.5293973000371
+}
