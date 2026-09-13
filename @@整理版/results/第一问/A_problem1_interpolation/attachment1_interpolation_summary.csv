@@ -1,0 +1,3 @@
+﻿variable,unit,observation_count,observation_interval_s,maximum_absolute_difference,maximum_difference_time_s,signed_difference_at_maximum,mean_absolute_difference,root_mean_square_difference,maximum_relative_to_observed_range_percent,maximum_knot_difference,pchip_local_overshoot_count
+temperature,degC,31,60.0,0.034997997340944664,1034.0,-0.034997997340944664,0.00964635633963178,0.012060491107062048,0.25899502213383163,0.0,0
+moisture,kg/kg,31,60.0,4.064851577503456e-05,1364.0,4.064851577503456e-05,6.268512380397387e-06,9.245554781074157e-06,0.3024443138023405,0.0,0

@@ -1,0 +1,5 @@
+# Generated dependency runtimes; keep them out of version control.
+node_modules/
+/比赛题目/CUMCM2026Problems/B题/CUMCM2026B
+@@整理版/results/A_problem2_coupled/result2.xlsx.inspect.ndjson
+results/A_problem2_coupled/result2.xlsx.inspect.ndjson

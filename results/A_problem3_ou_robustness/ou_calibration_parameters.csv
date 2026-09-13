@@ -1,0 +1,3 @@
+﻿variable,unit,fit_sample_count,original_time_weighted_mean,ou_huber_equilibrium,equilibrium_minus_original,discrete_phi_60s,kappa_per_s,relaxation_time_s,half_life_s,innovation_scale,stationary_scale,phi_at_lower_bound
+烘房温度,degC,61,49.99591667,49.99893443,0.003017759563,1e-06,0.2302585093,4.342944819,3.010299957,0.1806829638,0.1806829638,True
+烘房水分浓度,kg/kg,61,0.04999041667,0.04998700265,-3.414016471e-06,0.03738801451,0.05477341823,18.2570311,12.65480963,0.0001733747024,0.0001734960067,False

@@ -1,0 +1,10 @@
+Q1 temp values diff (excluding header): 1801 rows differ; first: [(0, '28.0000', '28.000000'), (1, '28.0000', '28.000000')]
+t=60 radius=1.995767: empties=1 from ['r_2.0_cm'] ... surface=2.0805 r_2.0=
+t=600 radius=1.957667: empties=1 from ['r_2.0_cm'] ... surface=1.4477 r_2.0=
+t=3600 radius=1.794000: empties=3 from ['r_1.8_cm', 'r_1.9_cm', 'r_2.0_cm'] ... surface=0.9839 r_2.0=
+t=36000 radius=1.273000: empties=8 from ['r_1.3_cm', 'r_1.4_cm', 'r_1.5_cm'] ... surface=0.2244 r_2.0=
+t=108000 radius=1.201000: empties=8 from ['r_1.3_cm', 'r_1.4_cm', 'r_1.5_cm'] ... surface=0.0595 r_2.0=
+t=180000 radius=1.200000: empties=8 from ['r_1.3_cm', 'r_1.4_cm', 'r_1.5_cm'] ... surface=0.0527 r_2.0=
+t=184020 radius=1.200000: empties=8 from ['r_1.3_cm', 'r_1.4_cm', 'r_1.5_cm'] ... surface=0.0526 r_2.0=
+t=184022 radius=1.200000: empties=8 from ['r_1.3_cm', 'r_1.4_cm', 'r_1.5_cm'] ... surface=0.0526 r_2.0=
+first row with empties: ('60', '1.995767', ['r_2.0_cm'], 1)
