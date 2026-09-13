@@ -1,0 +1,36 @@
+{
+  "drying_time": {
+    "regular_h": 51.117222222222225,
+    "steam_h": 56.420833333333334,
+    "difference_h": 5.3036111111111115,
+    "relative_pct": 10.375389899033816
+  },
+  "surface_temperature_c": {
+    "regular_min": 28.0,
+    "regular_max": 50.05000000000001,
+    "steam_min": 10.015880000000038,
+    "steam_min_time_h": 0.18333333333333332,
+    "steam_max": 49.850888
+  },
+  "center_temperature_c": {
+    "steam_min": 13.427838000000008,
+    "steam_min_time_h": 0.65
+  },
+  "energy_balance_per_unit_length": {
+    "integrated_convective_input_J_m": 2167719.7130165426,
+    "integrated_latent_heat_J_m": 2154234.4029343077,
+    "integrated_conductive_heat_into_solid_J_m": 13485.31021005239,
+    "accumulated_sensible_energy_change_J_m": 13485.310063375477,
+    "surface_integrated_residual_J_m": -0.00012781750410795212,
+    "surface_integrated_relative_residual": 5.896403642059637e-11,
+    "storage_integrated_residual_J_m": -0.0001466769135731738,
+    "storage_integrated_relative_residual": 1.0876791952760275e-08,
+    "maximum_step_surface_residual_W_m2": 2.2124106635601493e-07,
+    "maximum_step_storage_residual_J_m": 5.512640166571714e-07
+  },
+  "latent_heat_flux": {
+    "max_w_m2": 1218.2953137377535,
+    "min_w_m2": 3.6089412965258947
+  },
+  "radius_shrinkage": "2.0 -> 1.2 cm (identical for both models, Attachment 2)"
+}

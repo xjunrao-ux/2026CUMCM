@@ -1,0 +1,86 @@
+{
+  "model_scope": {
+    "geometry": "fixed finite cylinder, axisymmetric 2D half-length domain",
+    "radius_m": 0.02,
+    "length_m": 0.25,
+    "end_faces": "both fully exposed; half-domain uses midplane symmetry",
+    "side_heat_transfer_w_m2_k": 25.0,
+    "end_heat_transfer_w_m2_k": 25.0,
+    "side_mass_transfer_m_s": 8e-07,
+    "end_mass_transfer_m_s": 8e-07,
+    "latent_heat": "excluded",
+    "shrinkage": "excluded in question 3",
+    "drying_threshold_kg_kg": 0.15,
+    "official_radial_output": "midplane z=0, the conservative cross-section"
+  },
+  "constant_boundary": {
+    "temperature_c": 49.99591666666667,
+    "moisture_kg_kg": 0.04999041666666666
+  },
+  "production": {
+    "nr": 80,
+    "nz_half_length": 40,
+    "cell_count": 3200,
+    "drying_time_s": 207291.0,
+    "drying_time_h": 57.58083333333333,
+    "previous_time_s": 207290.0,
+    "previous_maximum_moisture": 0.15000020908634776,
+    "final_maximum_moisture": 0.14999991787207356,
+    "controlling_radius_cm": 0.0,
+    "controlling_axial_distance_from_midplane_cm": 0.0,
+    "controlling_location": "center",
+    "maximum_picard_iterations": 17,
+    "time_step_counts": {
+      "measured_environment": 480,
+      "constant_environment": 1606,
+      "threshold_refinement": 171
+    },
+    "runtime_s": 591.8693800000183
+  },
+  "comparison_with_1d": {
+    "historical_fine_1d_drying_time_s": 207017.0,
+    "historical_fine_1d_drying_time_h": 57.50472222222222,
+    "matched_1d_drying_time_s": 207299.0,
+    "matched_1d_drying_time_h": 57.58305555555555,
+    "matched_time_reduction_s": 8.0,
+    "matched_time_reduction_h": 0.0022222222222222222,
+    "matched_time_reduction_percent": 0.0038591599573562824,
+    "bias_corrected_2d_drying_time_s": 207009.0,
+    "bias_corrected_2d_drying_time_h": 57.5025,
+    "bias_corrected_reduction_vs_fine_1d_s": 8.0,
+    "bias_corrected_reduction_vs_fine_1d_percent": 0.003864416931942787,
+    "bias_correction_method": "fine 1D result plus matched-grid (2D minus 1D) geometry increment"
+  },
+  "half_domain_moisture_balance": {
+    "storage_change": -0.00038148562875293533,
+    "integrated_side_outflow": 0.0003612776410532481,
+    "integrated_end_outflow": 2.0207987699649727e-05,
+    "side_outflow_fraction": 0.9470281809416753,
+    "end_outflow_fraction": 0.05297181905832471,
+    "residual": -3.750661890442042e-17,
+    "relative_residual": 9.831725254507854e-14
+  },
+  "checks": {
+    "previous_state_not_dry": true,
+    "final_state_all_dry": true,
+    "controlling_point_is_midplane_axis": true,
+    "saved_midplane_time_monotonicity_violation_count": 0,
+    "minimum_saved_moisture": 0.052649104263442194,
+    "insulated_end_reduction": {
+      "temperature_max_abs_error_c": 1.787014980436652e-12,
+      "moisture_max_abs_error_kg_kg": 4.440892098500626e-14
+    }
+  },
+  "coarse_validation": {
+    "nr": 40,
+    "nz_half_length": 20,
+    "drying_time_s": 207712.0,
+    "drying_time_h": 57.69777777777778,
+    "coarse_minus_production_s": 421.0,
+    "coarse_minus_production_percent": 0.2030961305604199,
+    "relative_moisture_balance_residual": 1.1030769309097674e-14,
+    "matched_1d_drying_time_s": 207722.0,
+    "matched_geometry_time_reduction_s": 10.0,
+    "geometry_reduction_difference_vs_production_s": 2.0
+  }
+}
